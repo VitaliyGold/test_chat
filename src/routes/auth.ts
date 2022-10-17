@@ -1,27 +1,38 @@
-import { FastifyPluginAsync } from 'fastify';
+import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
+import { v4 as uuidv4 } from 'uuid';
+
+type CustomRequest = FastifyRequest<{
+    Body: { 
+        login: string,
+        password: string
+     };
+  }>
+
 
 const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-    fastify.post('/auth/login', async function(request, reply) {
+    fastify.post('/auth/registration', async function(request: CustomRequest, reply: FastifyReply) {
 
-        fastify.pg.connect(onConnect)
-        console.log(1234)
-        function onConnect (err, client) {
-            if (err) {
-                console.log(err)
-                return
-            }
+        const { login, password } = request.body
+        const client = await fastify.pg.connect()
+        
+        const user_id = uuidv4()
 
-            client.query(
-                'select all from users',
-                function onResult (err, result) {
-                    console.log(err)
-                    console.log(result)
-                }
+        try {
+            const { rows } = await client.query(
+                'INSERT INTO public.auth_data (user_id, login, password) VALUES($1, $2, $3)', [user_id, login, password],
             )
+            console.log(rows)
+            return {
+                root: true
+            }
+        } catch(e) {
+            console.log(e)
+             client.release()
+            return {
+                error: true
+            }
         }
-        return {
-            root: true
-        }
+        
     })
 }
 
