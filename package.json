@@ -14,6 +14,8 @@
     "@fastify/cookie": "^8.3.0",
     "@fastify/postgres": "^5.1.0",
     "@fastify/session": "^10.0.1",
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.8.1",
     "fastify-autoload": "^3.13.0",

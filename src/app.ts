@@ -1,19 +1,13 @@
 import { join } from "path";
 import AutoLoad, { AutoloadPluginOption } from "fastify-autoload";
 import { FastifyPluginAsync } from "fastify";
+import { loadEnv } from "./helpers/helpers";
 
 export type AppOption = {
 
 } & Partial<AutoloadPluginOption>;
 
-function loadEnv(key: string) {
-    const val = process.env[key];
 
-    if (!val) {
-        throw new Error(`key ${key} is a required env variable`)
-    } 
-    return val;
-}
 
 type AppConfig = typeof appConfig;
 
