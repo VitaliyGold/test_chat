@@ -1,62 +1,87 @@
 import { loadEnv } from './../../helpers/helpers';
 import { v4 as uuidv4 } from 'uuid';
 import { FastifyReply } from 'fastify';
-import { RegistrationRequest } from '../../types/auth';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest } from '../../types/auth';
 import { FastifyInstance } from 'fastify';
-import { PostgresDb } from '@fastify/postgres';
+
+import { validateLength } from './helpers';
+import { getUserToLogin, createNewUser } from './auth.repositories';
 const bcrypt = require('bcrypt');
 
 class RegistrationService {
 
     async registration(fastify: FastifyInstance, req: RegistrationRequest, reply: FastifyReply) {
-        const { login, password } = req.body;
-        if (!this.validateLogin(login) && this.validatePassword(password)) {
-            return reply.code(400).send({ error: true, errorMessage: 'Некорректные данные' })
+        const { login, password, name } = req.body;
+        if (!validateLength([[login, 5], [password, 5], [name, 1]])) {
+            return reply.code(400).send({ 
+                error: true, 
+                errorMessage: 'Некорректные данные' 
+            })
         }
-        const user = await this.getUserToLogin(fastify.pg, login)
+        const user = await getUserToLogin(fastify.pg, login)
 
         if (user) {
-            return reply.code(400).send({ error: true, errorMessage: 'Такой логин уже есть' })
+            return reply.code(400).send({ 
+                error: true, 
+                errorMessage: 'Такой пользователь уже есть' 
+            })
         }
-        console.log(1234)
-        const hashPassword = await bcrypt.hashSync(password, 10)
-        console.log(hashPassword)
+        const hashPassword = await bcrypt.hash(password, 10)
         const user_id = uuidv4()
 
-        const new_user = await this.createNewUser(fastify.pg, login, hashPassword, user_id)
-        console.log(new_user);
-        return reply.code(201).send();
+        await createNewUser(fastify.pg, { login, password: hashPassword, name, user_id })
+        return reply.code(201).send({ user_id });
     }
 
-    async getUserToLogin(bd: PostgresDb, user_login: string) {
-        const { rows } = await bd.query(
-            `SELECT login FROM auth_data WHERE login=$1`, [user_login]
-        )
-        console.log(rows)
-        if (rows.length) {
-            return rows
+    async checkLogin(fastify: FastifyInstance, req: CheckLoginRequest, reply: FastifyReply) {
+        const { login } = req.body;
+        
+        const user = await getUserToLogin(fastify.pg, login)
+
+        if (user) {
+            return reply.code(400).send({ 
+                error: true, 
+                errorMessage: 'Такой пользователь уже есть' 
+            })
         }
-        return null
+        return reply.code(200).send({
+            result: true
+        });
     }
 
-    async createNewUser(bd: PostgresDb, login: string, password: string, user_id: string) {
-        console.log(login)
-        return await bd.query('INSERT INTO auth_data (login, password, user_id) VALUES ($1, $2, $3) RETURNING id', [login, password, user_id])
-    }
+    async login(fastify: FastifyInstance, req: LoginRequest, reply: FastifyReply) {
 
-    validateLogin(login: string) {
-        if (login.length < 5) {
-            return false
+        const { login, password } = req.body;
+
+        if (!validateLength([[login, 5], [password, 5])) {
+            return reply.code(400).send({ 
+                error: true, 
+                errorMessage: 'Некорректные данные' 
+            })
         }
-        return true
+
+        const user = await getUserToLogin(fastify.pg, login)
+
+        if (!user) {
+            return reply.code(400).send({ 
+                error: true, 
+                errorMessage: 'Пользователя не существует' 
+            })
+        }
+
+        const validPassword = bcrypt.compare(myPlaintextPassword, user.password)
+
+
+
+        return reply.code(200).send({
+            result: true
+        });
+
     }
 
-    validatePassword(password: string) {
-        if (password.length < 5) {
-            return false
-        }
-        return true
-    }
+    
+
+    
 
     
 }
