@@ -13,6 +13,9 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.post('/auth/login', async function(request: LoginRequest, reply: FastifyReply) {
         return RegistrationService.login(fastify, request, reply);
     })
+    fastify.post('/auth/refresh', async function(request: LoginRequest, reply: FastifyReply) {
+        return RegistrationService.refresh(fastify, request, reply);
+    })
 }
 
 export default authRoute;

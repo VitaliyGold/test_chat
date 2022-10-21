@@ -31,3 +31,7 @@ export type CheckLoginRequest = FastifyRequest<{
 export type LoginRequest = FastifyRequest<{
     Body: AuthData
 }>
+
+export type RefreshTokenRequest = FastifyRequest<{
+    Body: {}
+}>

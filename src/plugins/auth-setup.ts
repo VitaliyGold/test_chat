@@ -1,9 +1,28 @@
 import fp from 'fastify-plugin';
-import cookie from '@fastify/cookie';
-import session from '@fastify/session';
+import jwt from '@fastify/jwt';
+import fastifyCookie  from '@fastify/cookie';
+import { loadEnv } from '../helpers/helpers';
 
 export default fp(async (fastify) => {
     return fastify
-        //.register(cookie)
-        //.register(session) 
-});
+        .register(jwt, {
+            secret: loadEnv('JWTKEY'),
+            cookie: {
+                cookieName: 'refreshToken',
+                signed: true
+            },
+            sign: {
+                expiresIn: '60000'
+              }
+        })
+        .register(fastifyCookie, {
+            secret: loadEnv('COOKIE_KEY'),
+        })
+        .decorate("authenticate", async function(request, reply) {
+            try {
+              await request.jwtVerify()
+            } catch (err) {
+              reply.send(err)
+            }
+        })
+})

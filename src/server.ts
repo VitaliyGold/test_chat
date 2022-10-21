@@ -8,7 +8,6 @@ const server = Fastify({
     
 })
 
-
 server
   .register(app)
   .then(() => server.ready())

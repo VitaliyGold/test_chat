@@ -1,7 +1,7 @@
 import { loadEnv } from './../../helpers/helpers';
 import { v4 as uuidv4 } from 'uuid';
 import { FastifyReply } from 'fastify';
-import { RegistrationRequest, CheckLoginRequest, LoginRequest } from '../../types/auth';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshTokenRequest } from '../../types/auth';
 import { FastifyInstance } from 'fastify';
 
 import { validateLength } from './helpers';
@@ -28,10 +28,34 @@ class RegistrationService {
         }
         const hashPassword = await bcrypt.hash(password, 10)
         const user_id = uuidv4()
+
+
+
         try {
             await createNewUser(fastify.pg, { login, password: hashPassword, name, user_id })
             
-            return reply.code(201).send({ user_id });
+            const token = await reply.jwtSign({
+                name: 'authToken',
+                id: user_id
+            });
+    
+            const refreshToken = await reply.jwtSign({
+                name: 'refreshToken'
+            }, {expiresIn: '2d'});
+
+            return reply.code(200)
+                .setCookie('refreshToken', refreshToken, {
+                    path: '/',
+                    secure: false,
+                    httpOnly: true,
+                    sameSite: false
+                })
+                .send({ 
+                    login: login,
+                    name: name,
+                    user_id: user_id,
+                    token 
+                });
 
         } catch(e) {
             return reply.code(500).send({ 
@@ -93,12 +117,43 @@ class RegistrationService {
             })
         }
 
-        return reply.code(200).send({
-            login: user.login,
-            name: user.name,
-            user_id: user.user_id
+        const token = fastify.jwt.sign({
+            name: 'authToken',
+            id: user.user_id
         });
 
+        const refreshToken = fastify.jwt.sign({
+            name: 'refreshToken'
+        }, {expiresIn: '2d'});
+
+        return reply.code(200).setCookie('refreshToken', refreshToken, {
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            sameSite: false
+          }).send({
+            login: user.login,
+            name: user.name,
+            user_id: user.user_id,
+            token
+        });
+
+    }
+
+    async refresh(fastify: FastifyInstance, req: RefreshTokenRequest, reply: FastifyReply) {
+        try {
+            const refresh = req.cookies.refreshToken
+            if (!refresh) {
+
+            }
+        } catch(e) {
+            reply.status(401).send('идите нахуй')
+        }
+        
+        /* @ts-ignore */
+        const aaa = await req.jwtVerify()
+        console.log(aaa)
+        return reply.status(201)
     }
     
 }
