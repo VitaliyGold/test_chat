@@ -4,9 +4,11 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --watch './src/**/*.ts' --exec ts-node src/server.ts",
-    "build": "tsc"
+    "start": "npm run build:ts && fastify start -l info dist/app.js",
+    "build:ts": "tsc",
+    "watch:ts": "tsc -w",
+    "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +19,7 @@
     "@fastify/session": "^10.0.1",
     "@types/bcrypt": "^5.0.0",
     "bcrypt": "^5.1.0",
+    "concurrently": "^7.5.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.8.1",
     "fastify-autoload": "^3.13.0",

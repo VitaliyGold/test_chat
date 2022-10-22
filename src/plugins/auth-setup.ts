@@ -9,7 +9,7 @@ export default fp(async (fastify) => {
             secret: loadEnv('JWTKEY'),
             cookie: {
                 cookieName: 'refreshToken',
-                signed: true
+                signed: false
             },
             sign: {
                 expiresIn: '60000'

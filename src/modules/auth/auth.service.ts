@@ -123,7 +123,8 @@ class RegistrationService {
         });
 
         const refreshToken = fastify.jwt.sign({
-            name: 'refreshToken'
+            name: 'refreshToken',
+            user_id: user.user_id
         }, {expiresIn: '2d'});
 
         return reply.code(200).setCookie('refreshToken', refreshToken, {
@@ -151,9 +152,21 @@ class RegistrationService {
         }
         
         /* @ts-ignore */
-        const aaa = await req.jwtVerify()
-        console.log(aaa)
-        return reply.status(201)
+        const { user_id } = await req.jwtVerify({ onlyCookie: true })
+        
+        if (!user_id) {
+            return reply.status(401).send('Внутри нет токена пользователя')
+        }
+
+        
+        const token = fastify.jwt.sign({
+            name: 'authToken',
+            id: user_id
+        });
+        
+        return reply.status(200).send({
+            token
+        })
     }
     
 }
