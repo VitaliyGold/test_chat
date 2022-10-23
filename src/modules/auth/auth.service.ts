@@ -1,11 +1,10 @@
-import { loadEnv } from './../../helpers/helpers';
 import { v4 as uuidv4 } from 'uuid';
 import { FastifyReply } from 'fastify';
 import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshTokenRequest } from '../../types/auth';
 import { FastifyInstance } from 'fastify';
-
-import { validateLength } from './helpers';
-import { checkUseLogin, createNewUser, getUserData } from './auth.repositories';
+import { validateLength } from '../../helpers/helpers';
+import { checkUseLogin, createNewUser } from './auth.repositories';
+import { getAuthUserData } from './auth.repositories';
 const bcrypt = require('bcrypt');
 
 class RegistrationService {
@@ -28,9 +27,6 @@ class RegistrationService {
         }
         const hashPassword = await bcrypt.hash(password, 10)
         const user_id = uuidv4()
-
-
-
         try {
             await createNewUser(fastify.pg, { login, password: hashPassword, name, user_id })
             
@@ -51,8 +47,6 @@ class RegistrationService {
                     sameSite: false
                 })
                 .send({ 
-                    login: login,
-                    name: name,
                     user_id: user_id,
                     token 
                 });
@@ -100,7 +94,7 @@ class RegistrationService {
             })
         }
 
-        const user = await getUserData(fastify.pg, login);
+        const user = await getAuthUserData(fastify.pg, login);
 
         if (!user) {
             return reply.code(400).send({ 
@@ -133,10 +127,8 @@ class RegistrationService {
             httpOnly: true,
             sameSite: false
           }).send({
-            login: user.login,
-            name: user.name,
-            user_id: user.user_id,
-            token
+            token,
+            user_id: user.user_id
         });
 
     }
@@ -163,10 +155,22 @@ class RegistrationService {
             name: 'authToken',
             id: user_id
         });
+
+        const refreshToken = fastify.jwt.sign({
+            name: 'refreshToken',
+            user_id: user_id
+        }, {expiresIn: '2d'});
         
-        return reply.status(200).send({
-            token
-        })
+        return reply.status(200).
+            setCookie('refreshToken', refreshToken, {
+                path: '/',
+                secure: false,
+                httpOnly: true,
+                sameSite: false
+            })
+            .send({
+                token
+            })
     }
     
 }

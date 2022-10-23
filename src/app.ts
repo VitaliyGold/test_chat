@@ -40,9 +40,9 @@ const app: FastifyPluginAsync<AppOption> = async (
 
 declare module 'fastify' {
     export interface FastifyInstance {
-        appConfig: AppConfig;
+        appConfig: AppConfig,
+        authenticate: never
     }
 }
 
 export default app;
-export { app };

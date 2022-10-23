@@ -1,22 +1,20 @@
 import { FastifyRequest } from 'fastify';
 
-interface AuthData {
+export interface AuthData {
     login: string,
     password: string,
 }
-interface RegistrationData extends AuthData{
+export interface RegistrationData extends AuthData{
     name: string,
-} 
+}
 
-export interface RegistrationModel extends RegistrationData{
+export interface RegistrationModel extends RegistrationData {
     user_id: string
 }
 
-
-export interface UserModel extends RegistrationModel{
-    id: number
+export interface AuthModel extends AuthData{
+    user_id: string
 }
-
 
 export type RegistrationRequest = FastifyRequest<{
     Body: RegistrationData;
