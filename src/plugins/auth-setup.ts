@@ -9,18 +9,28 @@ export default fp(async (fastify) => {
             secret: loadEnv('JWTKEY'),
             cookie: {
                 cookieName: 'refreshToken',
-                signed: false
+                signed: false,
             },
             sign: {
-                expiresIn: '60000'
-              }
+                expiresIn: '10m'
+            }
         })
         .register(fastifyCookie, {
             secret: loadEnv('COOKIE_KEY'),
+            parseOptions: {
+              path: '/',
+              secure: true,
+              httpOnly: true,
+              sameSite: true
+            }
+            
         })
         .decorate("authenticate", async function(request, reply) {
             try {
-              await request.jwtVerify()
+              const auth = request.headers.authorization;
+              const token = auth.split(' ')[1]
+              const { id } = fastify.jwt.verify<{ id: string }>(token)
+              request.user_id = id;
             } catch (err) {
               reply.send(err)
             }

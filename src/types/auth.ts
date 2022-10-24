@@ -33,3 +33,8 @@ export type LoginRequest = FastifyRequest<{
 export type RefreshTokenRequest = FastifyRequest<{
     Body: {}
 }>
+
+
+export interface RequestWithUserId extends FastifyRequest {
+    user_id: string
+}

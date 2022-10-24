@@ -1,11 +1,13 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+const querystring = require('querystring')
 
 import Fastify from 'fastify';
 import app from './app';
 
 const server = Fastify({ 
-    
+    logger: false,
+    querystringParser: str => querystring.parse(str.toLowerCase())
 })
 
 server

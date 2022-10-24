@@ -8,7 +8,7 @@ const usersRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         onRequest: [fastify.authenticate]
     }, 
     async function(request: GetUserRequest, reply: FastifyReply) {
-        const { user_id } = request.params
+        const { user_id } = request.query;
         return UsersService.getUserById(fastify, user_id, reply);
     })
     

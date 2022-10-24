@@ -6,7 +6,7 @@ export interface User {
 }
 
 export type GetUserRequest = FastifyRequest<{
-    Params: {
+    Querystring: {
         user_id: string
     }
 }>

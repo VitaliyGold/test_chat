@@ -1,15 +1,8 @@
 import { join } from "path";
-import AutoLoad, { AutoloadPluginOption } from "fastify-autoload";
+import fastifyAutoload from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import { loadEnv } from "./helpers/helpers";
 
-export type AppOption = {
-
-} & Partial<AutoloadPluginOption>;
-
-
-
-type AppConfig = typeof appConfig;
 
 const appConfig = {
     postgreDb: {
@@ -18,8 +11,11 @@ const appConfig = {
         db_name : loadEnv('POSTGRES_DB'),
         port: loadEnv('POSTGRES_PORT'),
         password:  loadEnv('PORSTGRES_PASSWORD'),
-    }
+    },
 }
+type AppConfig = typeof appConfig;
+
+type AppOption = FastifyPluginAsync & AppConfig
 
 const app: FastifyPluginAsync<AppOption> = async (
     fastify,
@@ -27,12 +23,12 @@ const app: FastifyPluginAsync<AppOption> = async (
 ): Promise<void> => {
 
     fastify.decorate('appConfig', appConfig);
-
-    void fastify.register(AutoLoad, {
+    
+    void fastify.register(fastifyAutoload, {
         dir: join(__dirname, 'plugins'),
         options: opts,
     })
-    void fastify.register(AutoLoad, {
+    void fastify.register(fastifyAutoload, {
         dir: join(__dirname, 'routes'),
         options: opts,
     })
@@ -41,7 +37,7 @@ const app: FastifyPluginAsync<AppOption> = async (
 declare module 'fastify' {
     export interface FastifyInstance {
         appConfig: AppConfig,
-        authenticate: never
+        authenticate: never,
     }
 }
 
