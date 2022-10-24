@@ -16,7 +16,7 @@ class UsersService {
         if (!user) {
             return reply.status(400).send({
                 error: true, 
-                errorMessage: 'Некорректный идентификатор пользователя' 
+                errorMessage: 'Пользователя не существует' 
             })
         }
 
