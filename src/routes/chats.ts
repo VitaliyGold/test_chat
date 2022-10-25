@@ -10,7 +10,9 @@ const chatsRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }, 
     async function(request: RequestWithUserId, reply: FastifyReply) {
 
-        return UsersService.getUserById(fastify, '1241', reply);
+        const user_id = request.user_id
+
+        return UsersService.getUserById(fastify, user_id, reply);
     })
     
 }

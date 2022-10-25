@@ -1,8 +1,8 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply } from "fastify";
 
 class ChatsService {
-    getList(fastify: FastifyInstance, user_id: string) {
-
+    getList(fastify: FastifyInstance, user_id: string, reply: FastifyReply) {
+        
     }
 }
 
