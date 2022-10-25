@@ -5,11 +5,11 @@ enum MessageTypes {
 
 
 export interface MessageDto {
-    text: string,
+    text_message: string,
     owner_id: string,
     chat_id: string,
     message_id: string,
-    checked: boolean,
+    watched: boolean,
     message_type: MessageTypes,
     time_send: Date
 }

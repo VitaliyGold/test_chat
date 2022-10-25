@@ -13,9 +13,9 @@ export async function checkUseLogin(bd: PostgresDb, user_login: string): Promise
 }
 
 export async function createNewUser(bd: PostgresDb, user_data: RegistrationModel): Promise<string> {
-    return await bd.transact(async bd => {
-        await bd.query('INSERT INTO auth_data (login, password, user_id) VALUES ($1, $2, $3) RETURNING id', [user_data.login, user_data.password, user_data.user_id])
-        await bd.query('INSERT INTO user_data (name, user_id) VALUES ($1, $2) RETURNING id', [user_data.name, user_data.user_id])
+    return await bd.transact(async client => {
+        await client.query('INSERT INTO auth_data (login, password, user_id) VALUES ($1, $2, $3) RETURNING id', [user_data.login, user_data.password, user_data.user_id])
+        await client.query('INSERT INTO user_data (name, user_id) VALUES ($1, $2) RETURNING id', [user_data.name, user_data.user_id])
         return user_data.user_id
     });
 }
