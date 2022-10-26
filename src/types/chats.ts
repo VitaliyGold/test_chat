@@ -11,7 +11,7 @@ enum ChatTypes{
 export interface createChatDto {
     chat_type: ChatTypes,
     owner_id: string,
-    members_table_id: string,
+    members_list: string,
     chat_name: string | null
 }
 
@@ -20,6 +20,7 @@ export interface ChatDto {
     chat_id: string,
     owner_id: string,
     members_table_id: string,
+    members_list: string,
     chat_name: string | null,
     lastMessage: MessageDto | null
 }

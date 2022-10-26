@@ -5,7 +5,7 @@ enum MessageTypes {
 
 
 export interface MessageDto {
-    text_message: string,
+    message_content: string,
     owner_id: string,
     chat_id: string,
     message_id: string,
