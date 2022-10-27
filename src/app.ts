@@ -3,7 +3,8 @@ import fastifyAutoload from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import { loadEnv } from "./helpers/helpers";
 
-
+// это уже не нужно, но удалять рано
+/*
 const appConfig = {
     postgreDb: {
         host: loadEnv('POSTGRES_HOST'),
@@ -16,13 +17,14 @@ const appConfig = {
 type AppConfig = typeof appConfig;
 
 type AppOption = FastifyPluginAsync & AppConfig
+*/
 
-const app: FastifyPluginAsync<AppOption> = async (
+const app: FastifyPluginAsync<FastifyPluginAsync> = async (
     fastify,
     opts
 ): Promise<void> => {
 
-    fastify.decorate('appConfig', appConfig);
+    //fastify.decorate('appConfig', FastifyPluginAsync);
     
     void fastify.register(fastifyAutoload, {
         dir: join(__dirname, 'plugins'),
@@ -36,7 +38,6 @@ const app: FastifyPluginAsync<AppOption> = async (
 
 declare module 'fastify' {
     export interface FastifyInstance {
-        appConfig: AppConfig,
         authenticate: never,
     }
 }

@@ -1,15 +1,7 @@
-import { PostgresDb } from '@fastify/postgres';
 import { RegistrationModel, AuthModel } from '../../types/auth';
-import { QueryResult } from 'pg';
-
+/*
 export async function checkUseLogin(bd: PostgresDb, user_login: string): Promise<boolean> {
-    const { rows }: QueryResult<string[]> = await bd.query(
-        `SELECT login FROM auth_data WHERE login=$1 LIMIT 1`, [user_login]
-    );
-    if (rows.length) {
-        return true;
-    }
-    return false;
+    
 }
 
 export async function createNewUser(bd: PostgresDb, user_data: RegistrationModel): Promise<string> {
@@ -32,3 +24,4 @@ export async function getAuthUserData(bd: PostgresDb, user_login: string): Promi
     }
     return null;
 }
+*/

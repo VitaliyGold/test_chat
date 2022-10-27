@@ -3,64 +3,32 @@ import { FastifyReply } from 'fastify';
 import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshTokenRequest } from '../../types/auth';
 import { FastifyInstance } from 'fastify';
 import { validateLength } from '../../helpers/helpers';
-import { checkUseLogin, createNewUser } from './auth.repositories';
-import { getAuthUserData } from './auth.repositories';
+//import { checkUseLogin, createNewUser } from './auth.repositories';
+//import { getAuthUserData } from './auth.repositories';
+import prisma from '../../utils/prisma';
 const bcrypt = require('bcrypt');
 
 class RegistrationService {
 
     async registration(fastify: FastifyInstance, req: RegistrationRequest, reply: FastifyReply) {
         const { login, password, name } = req.body;
-        if (!validateLength([[login, 5], [password, 5], [name, 1]])) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: 'Некорректные данные' 
-            })
-        }
-        const user = await checkUseLogin(fastify.pg, login)
-
-        if (user) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: `Пользователь ${login} уже существует` 
-            })
-        }
-        const hashPassword = await bcrypt.hash(password, 10)
-        const user_id = uuidv4()
-        try {
-            await createNewUser(fastify.pg, { login, password: hashPassword, name, user_id })
-            
-            const token = await reply.jwtSign({
-                name: 'authToken',
-                id: user_id
-            });
-    
-            const refreshToken = await reply.jwtSign({
-                name: 'refreshToken'
-            }, {expiresIn: '2d'});
-
-            return reply.code(200)
-                .setCookie('refreshToken', refreshToken, {
-                    path: '/',
-                    secure: false,
-                    httpOnly: true,
-                    sameSite: false
-                })
-                .send({ 
-                    user_id: user_id,
-                    token 
-                });
-
-        } catch(e) {
-            return reply.code(500).send({ 
-                error: true, 
-                errorMessage: `Произошла ошибка. Попробуйте позже.` 
-            })
-        }
         
+        const user_id = uuidv4()
+
+        const user = await prisma.auth_data.create({
+            data: {
+                login,
+                password,
+                salt: '123141241',
+                user_id
+            }
+        })
+        return reply.status(200).send({
+            user
+        })
         
     }
-
+    /*
     async checkLogin(fastify: FastifyInstance, req: CheckLoginRequest, reply: FastifyReply) {
         const { login } = req.body;
         
@@ -143,7 +111,6 @@ class RegistrationService {
             reply.status(401).send('идите нахуй')
         }
         
-        /* @ts-ignore */
         const { user_id } = await req.jwtVerify({ onlyCookie: true })
         
         if (!user_id) {
@@ -172,6 +139,7 @@ class RegistrationService {
                 token
             })
     }
+    */
     
 }
 
