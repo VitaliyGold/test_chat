@@ -1,7 +1,7 @@
 import { join } from "path";
 import fastifyAutoload from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
-import { loadEnv } from "./helpers/helpers";
+
 
 // это уже не нужно, но удалять рано
 /*
@@ -24,8 +24,6 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
     opts
 ): Promise<void> => {
 
-    //fastify.decorate('appConfig', FastifyPluginAsync);
-    
     void fastify.register(fastifyAutoload, {
         dir: join(__dirname, 'plugins'),
         options: opts,

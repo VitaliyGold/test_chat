@@ -1,30 +1,32 @@
 import { v4 as uuidv4 } from 'uuid';
-import { FastifyReply } from 'fastify';
-import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshTokenRequest } from '../../types/auth';
-import { FastifyInstance } from 'fastify';
-import { validateLength } from '../../helpers/helpers';
-//import { checkUseLogin, createNewUser } from './auth.repositories';
-//import { getAuthUserData } from './auth.repositories';
-import prisma from '../../utils/prisma';
+import { FastifyRequest, FastifyReply } from 'fastify';
+import { RegistrationRequest } from './types';
+import { getUserByLogin, createNewUser } from './auth.repositories';
+
 const bcrypt = require('bcrypt');
 
-class RegistrationService {
+class AuthService {
 
-    async registration(fastify: FastifyInstance, req: RegistrationRequest, reply: FastifyReply) {
-        const { login, password, name } = req.body;
+    async registration(request: RegistrationRequest, reply: FastifyReply) {
+        const { login, password, name } = request.body;
         
+        const user = await getUserByLogin(login)
+        if (user) {
+            return reply.status(400).send({
+                error: true,
+                errorMessages: 'This login already used'
+            })
+        }
+
         const user_id = uuidv4()
 
-        const user = await prisma.auth_data.create({
-            data: {
-                login,
-                password,
-                salt: '123141241',
-                user_id
-            }
-        })
-        return reply.status(200).send({
-            user
+        const hashPassword = await bcrypt.hash(password, 10)
+
+        await createNewUser({ login, password: hashPassword, user_id, name })
+        
+        return reply.status(201).send({
+            user_id,
+            token: '1244'
         })
         
     }
@@ -143,4 +145,4 @@ class RegistrationService {
     
 }
 
-export default new RegistrationService()
+export default new AuthService()

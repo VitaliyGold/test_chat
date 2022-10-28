@@ -15,7 +15,6 @@ model Auth_data {
   id Int @id @default(autoincrement())
   login String @unique
   password String
-  salt String
   Profile Profile_data?
   user_id String @unique @db.Uuid
 }
