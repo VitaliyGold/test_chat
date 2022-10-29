@@ -1,10 +1,9 @@
 import { FastifyRequest } from 'fastify';
 import { UserRegistrationScheme } from './auth.scheme';
 
-export interface RegistrationData {
+export interface CreateUserAuthTable {
     login: string,
     user_id: string,
-    name: string,
     password: string
 }
 

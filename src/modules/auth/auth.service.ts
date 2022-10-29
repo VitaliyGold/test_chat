@@ -9,21 +9,21 @@ class AuthService {
 
     async registration(request: RegistrationRequest, reply: FastifyReply) {
         const { login, password, name } = request.body;
-        
+        console.log(login)
         const user = await getUserByLogin(login)
         if (user) {
             return reply.status(400).send({
                 error: true,
-                errorMessages: 'This login already used'
+                errorMessage: 'This login already used'
             })
         }
 
-        const user_id = uuidv4()
+        const user_id = uuidv4();
 
         const hashPassword = await bcrypt.hash(password, 10)
 
-        await createNewUser({ login, password: hashPassword, user_id, name })
-        
+        const createdUser = await createNewUser({ login, password: hashPassword, user_id })
+        console.log(createdUser)
         return reply.status(201).send({
             user_id,
             token: '1244'

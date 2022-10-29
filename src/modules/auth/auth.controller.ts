@@ -5,7 +5,7 @@ import { RegistrationRequest } from './types';
 class AuthController {
     async registrationHandler(request: RegistrationRequest, 
         reply: FastifyReply) 
-    {
+    {   
         return AuthService.registration(request, reply)
     }
 }

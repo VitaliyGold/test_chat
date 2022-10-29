@@ -11,7 +11,7 @@ const loginScheme = z.object({
         .string({
             required_error: 'Password is required field',
             invalid_type_error: 'Password must be string'
-        }).min(5, {
+        }).length(5, {
             message: 'Password must be more 5 symbols'
         })
 })

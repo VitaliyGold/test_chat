@@ -1,5 +1,5 @@
 import prisma from "../../utils/prisma";
-import { RegistrationData } from "./types";
+import { CreateUserAuthTable } from "./types";
 
 export async function getUserByLogin(login: string) {
     return await prisma.auth_data.findUnique({
@@ -9,7 +9,7 @@ export async function getUserByLogin(login: string) {
     })
 }
 
-export async function createNewUser(authData: RegistrationData) {
+export async function createNewUser(authData: CreateUserAuthTable) {
     return await prisma.auth_data.create({
         data: {
             ...authData
