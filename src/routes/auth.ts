@@ -9,10 +9,14 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             body: $ref("registrationScheme"),
             response: {
                 201: $ref("registrationResponseScheme"),
-                400: $ref("registrationResponseErrorScheme")
             }
         },
-    }, AuthController.registrationHandler)
+        attachValidation: true
+    }, function(request: any, response) {
+        
+        return AuthController.registrationHandler(request, response)
+    })
+        
     /*
     fastify.post('/auth/checkLogin', async function(request: CheckLoginRequest, reply: FastifyReply) {
         return RegistrationService.checkLogin(fastify, request, reply);

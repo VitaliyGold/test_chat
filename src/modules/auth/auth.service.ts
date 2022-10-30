@@ -9,7 +9,6 @@ class AuthService {
 
     async registration(request: RegistrationRequest, reply: FastifyReply) {
         const { login, password, name } = request.body;
-        console.log(login)
         const user = await getUserByLogin(login)
         if (user) {
             return reply.status(400).send({
