@@ -7,7 +7,7 @@ import app from './app';
 
 const server = Fastify({ 
     logger: false,
-    querystringParser: str => querystring.parse(str.toLowerCase())
+    querystringParser: str => querystring.parse(str.toLowerCase()),
 })
 
 server
@@ -16,3 +16,4 @@ server
   .then(() => server.listen({ port: 5000 }, (err) => {
     if (err) throw err;
   }))
+

@@ -27,6 +27,7 @@
     "fastify": "^4.8.1",
     "fastify-qs": "^4.0.1",
     "fastify-session": "^5.2.1",
+    "fastify-type-provider-zod": "^1.1.7",
     "fastify-zod": "^1.2.0",
     "pg": "^8.8.0",
     "pg-promise": "^10.12.0",

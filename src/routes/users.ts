@@ -4,12 +4,10 @@ import UsersService from '../modules/users/users.service';
 
 const usersRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     fastify.get('/users/:userId', 
-    {
-        onRequest: [fastify.authenticate]
-    }, 
+    
     async function(request: GetUserRequest, reply: FastifyReply) {
         const { user_id } = request.query;
-        return UsersService.getUserById(fastify, user_id, reply);
+        return UsersService.getUserById(user_id, reply);
     })
     
 }

@@ -1,83 +1,54 @@
 import { v4 as uuidv4 } from 'uuid';
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { RegistrationRequest } from './types';
+import { FastifyReply, FastifyInstance } from 'fastify';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest } from './types';
 import { getUserByLogin, createNewUser } from './auth.repositories';
+import { AuthErrors } from './auth.errors';
 
 const bcrypt = require('bcrypt');
 
 class AuthService {
 
-    async registration(request: RegistrationRequest, reply: FastifyReply) {
+    async registration(fastify: FastifyInstance, request: RegistrationRequest, reply: FastifyReply) {
         const { login, password, name } = request.body;
         const user = await getUserByLogin(login)
         if (user) {
-            return reply.status(400).send({
-                error: true,
-                errorMessage: 'This login already used'
-            })
+            return reply.status(400).send(AuthErrors.busy_login)
         }
-
         const user_id = uuidv4();
 
         const hashPassword = await bcrypt.hash(password, 10)
 
-        const createdUser = await createNewUser({ login, password: hashPassword, user_id })
-        console.log(createdUser)
+        await createNewUser({ login, password: hashPassword, user_id, name })
         return reply.status(201).send({
             user_id,
             token: '1244'
         })
         
     }
-    /*
-    async checkLogin(fastify: FastifyInstance, req: CheckLoginRequest, reply: FastifyReply) {
+    async checkLogin(req: CheckLoginRequest, reply: FastifyReply) {
         const { login } = req.body;
-        
-        if (!validateLength([[login, 5]])) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: 'Некорректные данные' 
-            })
-        }
 
-        const user = await checkUseLogin(fastify.pg, login);
+        const user = await getUserByLogin(login)
         if (user) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: `Пользователь ${login} уже существует` 
-            })
+            return reply.code(400).send(AuthErrors.busy_login)
         }
         return reply.code(200).send({
             result: true
         });
     }
-
     async login(fastify: FastifyInstance, req: LoginRequest, reply: FastifyReply) {
 
         const { login, password } = req.body;
 
-        if (!validateLength([[login, 5], [password, 5]])) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: 'Некорректные данные' 
-            })
-        }
-
-        const user = await getAuthUserData(fastify.pg, login);
+        const user = await getUserByLogin(login);
 
         if (!user) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: 'Пользователя не существует' 
-            })
+            return reply.code(400).send(AuthErrors.user_not_exist)
         };
 
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return reply.code(400).send({ 
-                error: true, 
-                errorMessage: 'Неверная связка логин/пароль' 
-            })
+            return reply.code(400).send(AuthErrors.wrong_auth_data)
         }
 
         const token = fastify.jwt.sign({
@@ -101,8 +72,8 @@ class AuthService {
         });
 
     }
-
-    async refresh(fastify: FastifyInstance, req: RefreshTokenRequest, reply: FastifyReply) {
+    /*
+    async refresh(req: RefreshTokenRequest, reply: FastifyReply) {
         try {
             const refresh = req.cookies.refreshToken
             if (!refresh) {
