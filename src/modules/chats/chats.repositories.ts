@@ -1,5 +1,38 @@
-import { PostgresDb } from '@fastify/postgres';
-import { QueryResult } from 'pg';
-import { ChatDto } from '../../types/chats';
-import { MessageDto } from 'src/types/messages';
+import prisma from "../../utils/prisma";
+import { ChatDto } from "./chats.types";
+import { Prisma } from '@prisma/client'
 
+export async function findChatForId(chat_id: string) {
+    return prisma.chats_data.findUnique({
+        where: {
+            chat_id: chat_id
+        }
+    })
+}
+
+export async function createNewChat(chat_info: ChatDto) {
+    return await prisma.chats_data.create({
+        data: {
+            chat_id: chat_info.chat_id,
+            chat_type: chat_info.chat_type,
+            owner_id: chat_info.owner_id,
+            member: {
+                createMany: {
+                    data: [
+                        { user_id: chat_info.members[0], chat_id: chat_info.chat_id },
+                            
+                        { user_id: chat_info.members[1], chat_id: chat_info.chat_id }
+                    ]
+                }
+            },
+            messages: {
+                create: [
+                    { 
+                        owner_id: chat_info.owner_id,
+                        message_text: chat_info.start_message
+                     }
+                ]
+            }
+        }
+    })
+}

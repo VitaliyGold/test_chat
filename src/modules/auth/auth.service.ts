@@ -54,7 +54,7 @@ class AuthService {
         const token = fastify.jwt.sign({
             name: 'authToken',
             user_id: user.user_id
-        }, {expiresIn: '1m'});
+        }, {expiresIn: '1d'});
 
         const refreshToken = fastify.jwt.sign({
                 name: 'refreshToken',
@@ -84,7 +84,7 @@ class AuthService {
         const token = fastify.jwt.sign({
             name: 'authToken',
             user_id: user_id
-        }, {expiresIn: '1m'});
+        }, {expiresIn: '1d'});
 
         const refreshToken = fastify.jwt.sign({
             name: 'refreshToken',

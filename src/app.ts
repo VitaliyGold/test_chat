@@ -22,7 +22,6 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
             if (url[1] !== 'auth') {
                 // @ts-ignore
                 const jwtKey: { name: string } = await req.jwtVerify();
-                console.log(jwtKey)
                 if (jwtKey.name !== 'authToken') {
                     return reply.status(401).send({
                         message: 'Invalid token',
