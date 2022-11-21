@@ -1,11 +1,11 @@
-import { FastifyPluginAsync } from 'fastify';
-import { $ref } from '../modules/auth/auth.scheme';
-import AuthController from '../modules/auth/auth.controller';
-import { LoginRequest, RegistrationRequest } from 'src/modules/auth/types';
+import { FastifyPluginAsync, FastifyRequest } from 'fastify';
+import { $ref } from '../../modules/auth/auth.scheme';
+import AuthController from '../../modules/auth/auth.controller';
+import { LoginRequest, RegistrationRequest } from '../../modules/auth/types';
 
 
 const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-    fastify.post('/auth/registration',  {
+    fastify.post('/registration',  {
         schema: {
             body: $ref("registrationScheme"),
             response: {
@@ -17,7 +17,7 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         return AuthController.registrationHandler(fastify, req, reply)
     })
         
-    fastify.post('/auth/checkLogin', {
+    fastify.post('/checkLogin', {
         schema: {
             body: $ref("checkLoginScheme"),
             response: {
@@ -26,7 +26,7 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
             }
         },
     }, AuthController.checkLoginHandler)
-    fastify.post('/auth/login', {
+    fastify.post('/login', {
         schema: {
             body: $ref("loginScheme"),
             response: {
@@ -37,11 +37,18 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }, function(req: LoginRequest, reply) {
         return AuthController.loginHandler(fastify, req, reply)
     })
-    /*
-    fastify.post('/auth/refresh', async function(request: LoginRequest, reply: FastifyReply) {
-        return RegistrationService.refresh(fastify, request, reply);
-    })
-    */
+    fastify.post('/refresh', {
+        schema: {
+            response: {
+                200: $ref("refreshTokenResponse"),
+                400: $ref("responseErrorScheme")
+            }
+        }, 
+    },
+        async function(request: FastifyRequest, reply) {
+            return AuthController.refreshTokenHandler(fastify, request, reply);
+        }
+    )
 }
 
 export default authRoute;

@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
-import { FastifyReply, FastifyInstance } from 'fastify';
-import { RegistrationRequest, CheckLoginRequest, LoginRequest } from './types';
+import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest,  } from './types';
 import { getUserByLogin, createNewUser } from './auth.repositories';
 import { AuthErrors } from './auth.errors';
 
@@ -53,13 +53,13 @@ class AuthService {
 
         const token = fastify.jwt.sign({
             name: 'authToken',
-            id: user.user_id
-        });
+            user_id: user.user_id
+        }, {expiresIn: '1m'});
 
         const refreshToken = fastify.jwt.sign({
-            name: 'refreshToken',
-            user_id: user.user_id
-        }, {expiresIn: '2d'});
+                name: 'refreshToken',
+                user_id: user.user_id
+            }, {expiresIn: '2d'});
 
         return reply.code(200).setCookie('refreshToken', refreshToken, {
             path: '/',
@@ -72,28 +72,19 @@ class AuthService {
         });
 
     }
-    /*
-    async refresh(req: RefreshTokenRequest, reply: FastifyReply) {
-        try {
-            const refresh = req.cookies.refreshToken
-            if (!refresh) {
-
-            }
-        } catch(e) {
-            reply.status(401).send('идите нахуй')
-        }
+    async refresh(fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
         
+        // @ts-ignore
         const { user_id } = await req.jwtVerify({ onlyCookie: true })
         
         if (!user_id) {
             return reply.status(401).send('Внутри нет токена пользователя')
         }
 
-        
         const token = fastify.jwt.sign({
             name: 'authToken',
-            id: user_id
-        });
+            user_id: user_id
+        }, {expiresIn: '1m'});
 
         const refreshToken = fastify.jwt.sign({
             name: 'refreshToken',
@@ -111,7 +102,6 @@ class AuthService {
                 token
             })
     }
-    */
     
 }
 

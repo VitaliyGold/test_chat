@@ -54,6 +54,11 @@ const checkLoginResponseScheme = z.object({
     result: z.boolean()
 })
 
+const refreshTokenResponse = z.object({
+    token: z.string({}),
+})
+
+
 const responseErrorScheme = z.object({
     error: z.string(),
     statusCode: z.number(),
@@ -80,8 +85,9 @@ export const { schemas: authSchemes, $ref } = buildJsonSchemas({
     loginResponseScheme,
     registrationResponseScheme,
     checkLoginResponseScheme,
-
+    refreshTokenResponse,
     responseErrorScheme
+    
 }, { $id: 'auth' })
 
 

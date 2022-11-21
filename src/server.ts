@@ -11,9 +11,11 @@ const server = Fastify({
 })
 
 server
-  .register(app)
-  .then(() => server.ready())
-  .then(() => server.listen({ port: 5000 }, (err) => {
-    if (err) throw err;
-  }))
+    .register(app)
+    .then(() => {
+        return server.ready()
+    })
+    .then(() => server.listen({ port: 5000 }, (err) => {
+        if (err) throw err;
+    }))
 

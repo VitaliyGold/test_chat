@@ -1,5 +1,5 @@
 import AuthService from '../auth/auth.service';
-import { FastifyReply, FastifyInstance } from 'fastify';
+import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify';
 import { RegistrationRequest, CheckLoginRequest, LoginRequest } from './types';
 
 class AuthController {
@@ -14,11 +14,9 @@ class AuthController {
     async checkLoginHandler(request: CheckLoginRequest, reply: FastifyReply) {
         return AuthService.checkLogin(request, reply)
     }
-    /*
-    async refreshTokenHandler(request: FastifyRequest, reply: FastifyReply) {
-        return AuthService.registration(request, reply)
+    async refreshTokenHandler(fastify: FastifyInstance, request: FastifyRequest, reply: FastifyReply) {
+        return AuthService.refresh(fastify, request, reply)
     }
-    */
 }
 
 export default new AuthController()

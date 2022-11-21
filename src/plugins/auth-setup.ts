@@ -25,14 +25,4 @@ export default fp(async (fastify) => {
             }
             
         })
-        .decorate("authenticate", async function(request, reply) {
-            try {
-              const auth = request.headers.authorization;
-              const token = auth.split(' ')[1]
-              const { id } = fastify.jwt.verify<{ id: string }>(token)
-              request.user_id = id;
-            } catch (err) {
-              reply.send(err)
-            }
-        })
 })
