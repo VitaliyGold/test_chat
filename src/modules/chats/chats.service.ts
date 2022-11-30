@@ -1,10 +1,12 @@
 import { FastifyInstance, FastifyReply } from "fastify";
 import { CreateChatInfoDto, ChatDto } from './chats.types';
-import { createNewChat } from './chats.repositories';
+import { createNewChat, getChatListForUserId } from './chats.repositories';
 import { v4 as uuidv4 } from 'uuid';
 class ChatsService {
-    getList(fastify: FastifyInstance, user_id: string, reply: FastifyReply) {
-        
+    async getChatListForUserId(user_id: string, reply: FastifyReply) {
+        const chats_list = await getChatListForUserId(user_id);
+        console.log(chats_list)
+        reply.send(true)
     }
 
     async createChat(user_id: string, chat_info: CreateChatInfoDto, reply: FastifyReply) {

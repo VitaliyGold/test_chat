@@ -10,6 +10,13 @@ class ChatsController {
         return ChatsService.createChat(user_id, chat_info, reply);
     }
 
+    async GetChatsHandler(request: FastifyRequest, reply: FastifyReply) {
+        // @ts-ignore
+        const { user_id } = request.user;
+
+        return ChatsService.getChatListForUserId(user_id, reply);
+    }
+
    
 }
 
