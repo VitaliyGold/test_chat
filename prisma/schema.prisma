@@ -32,7 +32,7 @@ model Profile_data {
 model Chats_data {
   id Int @id @default(autoincrement())
   chat_type Int
-  chat_id String @unique @db.Uuid
+  chat_id String @unique
   owner Profile_data @relation(fields: owner_id, references: user_id)
   owner_id String @unique @db.Uuid
   member Chats_members_data[]
@@ -40,16 +40,17 @@ model Chats_data {
 }
 
 model Chats_members_data {
-  chat_id String @unique @db.Uuid
+  id Int @id @default(autoincrement())
+  chat_id String
   user_id String @unique @db.Uuid
   chat Chats_data @relation(fields: chat_id, references: chat_id)
   user Profile_data @relation(fields: user_id, references: user_id)
   messages Messages_data[]
-  @@id([chat_id])
 }
 
 model Messages_data {
-  chat_id String @unique @db.Uuid
+  id Int @id @default(autoincrement())
+  chat_id String @unique
   chat Chats_data @relation(fields: chat_id, references: chat_id)
   owner_id String @unique @db.Uuid
   owner Chats_members_data @relation(fields: owner_id, references: user_id)

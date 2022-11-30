@@ -11,28 +11,34 @@ export async function findChatForId(chat_id: string) {
 }
 
 export async function createNewChat(chat_info: ChatDto) {
-    return await prisma.chats_data.create({
-        data: {
-            chat_id: chat_info.chat_id,
-            chat_type: chat_info.chat_type,
-            owner_id: chat_info.owner_id,
-            member: {
-                createMany: {
-                    data: [
-                        { user_id: chat_info.members[0], chat_id: chat_info.chat_id },
-                            
-                        { user_id: chat_info.members[1], chat_id: chat_info.chat_id }
+    console.log(chat_info)
+    try {
+        return await prisma.chats_data.create({
+            data: {
+                chat_id: chat_info.chat_id,
+                chat_type: chat_info.chat_type,
+                owner_id: chat_info.owner_id,
+                member: {
+                    createMany: {
+                        data: [
+                            { user_id: chat_info.members[0] },
+                                
+                            { user_id: chat_info.members[1] }
+                        ]
+                    }
+                },
+                messages: {
+                    create: [
+                        { 
+                            owner_id: chat_info.owner_id,
+                            message_text: chat_info.start_message
+                         }
                     ]
                 }
-            },
-            messages: {
-                create: [
-                    { 
-                        owner_id: chat_info.owner_id,
-                        message_text: chat_info.start_message
-                     }
-                ]
             }
-        }
-    })
+        })
+    } catch(e) {
+        return e
+    }
+    
 }
