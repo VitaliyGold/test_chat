@@ -27,6 +27,7 @@ model Profile_data {
   chats_data Chats_data[]
   messages Messages_data[]
   @@id([user_id])
+  createdAt DateTime @default(now())
 }
 
 
@@ -38,6 +39,7 @@ model Chats_data {
   owner_id String @db.Uuid
   member Chats_members_data[]
   messages Messages_data[]
+  createdAt DateTime @default(now())
 }
 
 model Chats_members_data {
@@ -55,4 +57,5 @@ model Messages_data {
   owner_id String @db.Uuid
   owner Profile_data @relation(fields: owner_id, references: user_id)
   message_text String
+  createdAt DateTime @default(now())
 }

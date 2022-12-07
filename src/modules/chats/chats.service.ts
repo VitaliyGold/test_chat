@@ -6,7 +6,7 @@ class ChatsService {
     async getChatListForUserId(user_id: string, reply: FastifyReply) {
         const chats_list = await getChatListForUserId(user_id);
         console.log(chats_list)
-        reply.send(true)
+        reply.send(chats_list)
     }
 
     async createChat(user_id: string, chat_info: CreateChatInfoDto, reply: FastifyReply) {
@@ -23,7 +23,6 @@ class ChatsService {
         }
 
         const chat = await createNewChat(createChatInfo);
-        console.log(chat)
         reply.send(chat);
     }
 }

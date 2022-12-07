@@ -43,18 +43,28 @@ export async function createNewChat(chat_info: ChatDto) {
 }
 
 export async function getChatListForUserId(user_id: string) {
+    console.log(user_id)
     try {
         return await prisma.chats_members_data.findMany({
             where: {
                 user_id: user_id,
             },
             include: {
-                chat: true,
+                chat: {
+                    include: {
+                        messages: {
+                            orderBy: {
+                                createdAt: 'desc'
+                            }
+                        }
+                    }
+                },
                 user: {
                     select: {
                         name: true
                     }
-                }
+                },
+                
             }
         })
     } catch(e) {
