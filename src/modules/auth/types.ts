@@ -19,3 +19,5 @@ export type CheckLoginRequest = FastifyRequest<{Body: { login: string }}>
 export type RegistrationRequest = FastifyRequest<{Body: UserRegistrationScheme}>
 
 export type LoginRequest = FastifyRequest<{Body: UserLoginScheme}>
+
+export type AuthRequestParams = { user: { user_id: string } }

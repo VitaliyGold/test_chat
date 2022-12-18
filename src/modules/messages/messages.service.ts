@@ -1,6 +1,6 @@
 import { SendMessageDto, MessageDto } from './messages.types';
 import { FastifyReply } from 'fastify';
-import { sendMessage } from './messages.repositories';
+import { sendMessage, getMessageList } from './messages.repositories';
 
 class MessagesService {
     async sendMessage(user_id: string, message_info: SendMessageDto, reply: FastifyReply) {
@@ -13,6 +13,15 @@ class MessagesService {
         const chats_list = await sendMessage(message);
         console.log(chats_list)
         reply.send(chats_list)
+    }
+
+    async getList(user_id: string, chat_id: string, page: number, reply: FastifyReply) {
+
+        // вот тут должна быть проверка, может ли пользователь получить этот чат
+ 
+        const message_list = await getMessageList(chat_id, page);
+
+        reply.send(message_list)
     }
 }
 

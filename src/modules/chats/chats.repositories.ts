@@ -1,6 +1,5 @@
 import prisma from "../../utils/prisma";
 import { ChatDto } from "./chats.types";
-import { Prisma } from '@prisma/client'
 
 export async function findChatForId(chat_id: string) {
     return prisma.chats_data.findUnique({
@@ -55,7 +54,9 @@ export async function getChatListForUserId(user_id: string) {
                         messages: {
                             orderBy: {
                                 createdAt: 'desc'
-                            }
+                            },
+                            take: 1
+                            
                         }
                     }
                 },

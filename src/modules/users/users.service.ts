@@ -1,13 +1,17 @@
-import { FastifyReply, FastifyInstance } from 'fastify';
-import { getUserById } from './users.repositories';
+import { FastifyReply } from 'fastify';
+import { getUserProfileById } from './users.repositories';
 
 class UsersService {
-    async getUserById(user_id: string, reply: FastifyReply) {
-        return reply.status(200).send(true)
+    async getUserById(id: string, reply: FastifyReply) {
+        const user = await getUserProfileById(id);
+        reply.send(user);
     }
-    async getUsers(req, reply) {
-        reply.send('Вот список')
+    /*
+    async getUsers(name: string, page: number, reply: FastifyReply) {
+        const users = await getUsersList(name, page)
+        reply.send(users)
     }
+    */
 }
 
 export default new UsersService()
