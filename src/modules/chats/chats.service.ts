@@ -1,6 +1,6 @@
-import { FastifyInstance, FastifyReply } from "fastify";
+import { FastifyReply } from "fastify";
 import { CreateChatInfoDto, ChatDto } from './chats.types';
-import { createNewChat, getChatListForUserId } from './chats.repositories';
+import { createNewChat, getChatListForUserId, getChatForMemberIds } from './chats.repositories';
 import { v4 as uuidv4 } from 'uuid';
 class ChatsService {
     async getChatListForUserId(user_id: string, reply: FastifyReply) {
@@ -16,14 +16,29 @@ class ChatsService {
         // если нет - создать новый чат, записать в таблицу chats_members_data пользователей
         // создать первое сообщение в чате
 
+        const member_ids = chat_info.members;
+
+        const chat = await getChatForMemberIds(member_ids);
+        
+        if (chat) {
+            reply.status(403).send({
+                error: 'chat_already_created',
+                statusCode: 403,
+                message: 'чат уже создан',
+                chat_id: chat.chat_id
+            });
+            return
+        }
+        console.log(222)
+
         const createChatInfo: ChatDto = {
             ...chat_info,
             owner_id: user_id,
             chat_id: uuidv4()
         }
 
-        const chat = await createNewChat(createChatInfo);
-        reply.send(chat);
+        const new_chat = await createNewChat(createChatInfo);
+        reply.send(new_chat);
     }
 }
 

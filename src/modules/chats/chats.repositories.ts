@@ -73,3 +73,17 @@ export async function getChatListForUserId(user_id: string) {
     }
     
 }
+
+export async function getChatForMemberIds(member_ids: Array<string>) {
+    try {
+        return prisma.chats_members_data.findFirst({
+            where: {
+                user_id: {
+                    in: member_ids
+                }
+            },
+        })
+    } catch(e) {
+        console.log(e)
+    }
+}
