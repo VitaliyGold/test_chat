@@ -29,7 +29,6 @@ class ChatsService {
             });
             return
         }
-        console.log(222)
 
         const createChatInfo: ChatDto = {
             ...chat_info,

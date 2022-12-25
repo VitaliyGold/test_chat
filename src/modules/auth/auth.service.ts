@@ -18,11 +18,27 @@ class AuthService {
 
         const hashPassword = await bcrypt.hash(password, 10)
 
-        await createNewUser({ login, password: hashPassword, user_id, name })
-        return reply.status(201).send({
-            user_id,
-            token: '1244'
-        })
+        await createNewUser({ login, password: hashPassword, user_id, name });
+
+        const token = fastify.jwt.sign({
+            name: 'authToken',
+            user_id: user_id
+        }, {expiresIn: '2m'});
+
+        const refreshToken = fastify.jwt.sign({
+            name: 'refreshToken',
+            user_id: user.user_id
+        }, {expiresIn: '2d'});
+
+        return reply.code(200).setCookie('refreshToken', refreshToken, {
+            path: '/',
+            secure: false,
+            httpOnly: true,
+            sameSite: false
+          }).send({
+            token,
+            user_id
+        });
         
     }
     async checkLogin(req: CheckLoginRequest, reply: FastifyReply) {
@@ -54,7 +70,7 @@ class AuthService {
         const token = fastify.jwt.sign({
             name: 'authToken',
             user_id: user.user_id
-        }, {expiresIn: '1d'});
+        }, {expiresIn: '2m'});
 
         const refreshToken = fastify.jwt.sign({
                 name: 'refreshToken',
@@ -84,7 +100,7 @@ class AuthService {
         const token = fastify.jwt.sign({
             name: 'authToken',
             user_id: user_id
-        }, {expiresIn: '1d'});
+        }, {expiresIn: '2m'});
 
         const refreshToken = fastify.jwt.sign({
             name: 'refreshToken',

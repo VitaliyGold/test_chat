@@ -16,3 +16,26 @@ export async function getUserProfileById(id: string) {
         }
     })
 }
+
+
+export async function getUsersList(name: string, from: number, count = 50, user_id: string) {
+    return prisma.profile_data.findMany({
+        where: {
+            name: {
+                contains: name
+            },
+        },
+        select: {
+            name: true,
+            user_id: true,
+            chats_members_list: {
+                where: {
+                    user_id: user_id
+                }
+            }
+        },
+        skip: from, 
+        take: count
+        
+    })
+}

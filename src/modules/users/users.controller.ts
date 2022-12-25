@@ -1,23 +1,21 @@
 import UsersService from './users.service';
 import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify';
-import { GetUserByIdRequest, GetUsersList } from './types';
+import { GetUserByIdRequest, GetUsersList } from './users.types';
 
 class UserController {
-    /*
+    
     async getUsersListHandler(request: GetUsersList, reply: FastifyReply) {
+
+        const { user_id } = request.user;
 
         let { name, page } = request.query;
 
-        if (!page) page = 0;
-        if (!name) name = '';
-
-        return UsersService.getUsers(name, page, reply)
+        return UsersService.getUsers(name, page, user_id, reply)
     }
-    */
     async getUserByIdHandler(request: GetUserByIdRequest, reply: FastifyReply) {
-        console.log(request.params)
+
         const { userId } = request.params;
-        console.log(userId)
+
         return UsersService.getUserById(userId, reply)
     }
 

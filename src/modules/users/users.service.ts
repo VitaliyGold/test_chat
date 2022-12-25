@@ -1,17 +1,31 @@
 import { FastifyReply } from 'fastify';
-import { getUserProfileById } from './users.repositories';
+import { getUserProfileById, getUsersList } from './users.repositories';
+import { UsersList } from './users.types';
 
 class UsersService {
     async getUserById(id: string, reply: FastifyReply) {
         const user = await getUserProfileById(id);
         reply.send(user);
     }
-    /*
-    async getUsers(name: string, page: number, reply: FastifyReply) {
-        const users = await getUsersList(name, page)
-        reply.send(users)
+    async getUsers(name = '', page = 0, user_id: string, reply: FastifyReply) {
+        const users_list = await getUsersList(name, page, 50, user_id);
+
+        const users_with_chats: UsersList = [];
+        // помечаем есть ли у текущего пользователя чат с данным пользователем
+        for (let user of users_list) {
+
+            const chat_id = user.chats_members_list.length ? user.chats_members_list[0].chat_id : null;
+            
+            users_with_chats.push({
+                user_id: user.user_id,
+                name: user.name,
+                have_chat: !!user.chats_members_list.length,
+                chat_id 
+            })
+        }
+
+        reply.send(users_with_chats)
     }
-    */
 }
 
 export default new UsersService()
