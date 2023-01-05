@@ -16,18 +16,17 @@ class AuthService {
         }
         const user_id = uuidv4();
 
-        const hashPassword = await bcrypt.hash(password, 10)
-
+        const hashPassword = await bcrypt.hash(password, 10);
         await createNewUser({ login, password: hashPassword, user_id, name });
 
         const token = fastify.jwt.sign({
             name: 'authToken',
-            user_id: user_id
+            user_id
         }, {expiresIn: '2m'});
 
         const refreshToken = fastify.jwt.sign({
             name: 'refreshToken',
-            user_id: user.user_id
+            user_id
         }, {expiresIn: '2d'});
 
         return reply.code(200).setCookie('refreshToken', refreshToken, {
@@ -92,7 +91,7 @@ class AuthService {
         
         // @ts-ignore
         const { user_id } = await req.jwtVerify({ onlyCookie: true })
-        
+
         if (!user_id) {
             return reply.status(401).send('Внутри нет токена пользователя')
         }
@@ -104,7 +103,7 @@ class AuthService {
 
         const refreshToken = fastify.jwt.sign({
             name: 'refreshToken',
-            user_id: user_id
+            user_id
         }, {expiresIn: '2d'});
         
         return reply.status(200).

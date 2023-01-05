@@ -8,7 +8,7 @@ class UsersService {
         reply.send(user);
     }
     async getUsers(name = '', page = 0, user_id: string, reply: FastifyReply) {
-        const users_list = await getUsersList(name, page, 50, user_id);
+        const users_list = await getUsersList(name.toLowerCase(), Number(page), 50, user_id);
 
         const users_with_chats: UsersList = [];
         // помечаем есть ли у текущего пользователя чат с данным пользователем

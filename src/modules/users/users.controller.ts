@@ -7,7 +7,7 @@ class UserController {
     async getUsersListHandler(request: GetUsersList, reply: FastifyReply) {
 
         const { user_id } = request.user;
-
+        console.log(user_id);
         let { name, page } = request.query;
 
         return UsersService.getUsers(name, page, user_id, reply)

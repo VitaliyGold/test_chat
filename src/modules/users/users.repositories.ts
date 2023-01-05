@@ -18,11 +18,12 @@ export async function getUserProfileById(id: string) {
 }
 
 
-export async function getUsersList(name: string, from: number, count = 50, user_id: string) {
+export async function getUsersList(name: string, from = 0, count = 50, user_id: string) {
     return prisma.profile_data.findMany({
         where: {
             name: {
-                contains: name
+                contains: name,
+                mode: 'insensitive'
             },
         },
         select: {
