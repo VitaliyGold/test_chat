@@ -1,5 +1,4 @@
-import { FastifyPluginAsync, FastifyReply } from 'fastify';
-import { GetUserRequest } from 'src/types/user';
+import { FastifyPluginAsync } from 'fastify';
 import UserController from '../../modules/users/users.controller';
 
 const usersRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {

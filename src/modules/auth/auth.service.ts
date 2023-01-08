@@ -10,14 +10,24 @@ class AuthService {
 
     async registration(fastify: FastifyInstance, request: RegistrationRequest, reply: FastifyReply) {
         const { login, password, name } = request.body;
-        const user = await getUserByLogin(login)
-        if (user) {
+        const user_with_login = await getUserByLogin(login)
+        if (user_with_login) {
             return reply.status(400).send(AuthErrors.busy_login)
         }
         const user_id = uuidv4();
 
         const hashPassword = await bcrypt.hash(password, 10);
-        await createNewUser({ login, password: hashPassword, user_id, name });
+
+        const new_user = {
+            login,
+            password: hashPassword,
+            user_id,
+            name,
+            user_link: '',
+            avatar_link: ''
+        }
+
+        await createNewUser(new_user);
 
         const token = fastify.jwt.sign({
             name: 'authToken',

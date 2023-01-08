@@ -14,6 +14,10 @@ class UsersService {
         // помечаем есть ли у текущего пользователя чат с данным пользователем
         for (let user of users_list) {
 
+            if (user.user_id === user_id) {
+                continue;
+            }
+
             const chat_id = user.chats_members_list.length ? user.chats_members_list[0].chat_id : null;
             
             users_with_chats.push({

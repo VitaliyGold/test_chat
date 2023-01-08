@@ -17,7 +17,9 @@ export async function createNewUser(authData: CreateUserDto) {
             password: authData.password,
             Profile:{
                 create: {
-                    name: authData.name
+                    name: authData.name,
+                    avatar_link: authData.avatar_link,
+                    user_link: authData.user_link
                 }
             }
         }

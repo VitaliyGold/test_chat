@@ -1,5 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -22,7 +20,9 @@ model Auth_data {
 model Profile_data {
   name String
   auth_data Auth_data @relation(fields: user_id, references: user_id)
-  user_id String @unique @db.Uuid 
+  user_id String @unique @db.Uuid
+  avatar_link String @default("")
+  user_link String @default("")
   chats_members_list Chats_members_data[]
   chats_data Chats_data[]
   messages Messages_data[]
