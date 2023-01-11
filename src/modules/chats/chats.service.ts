@@ -1,12 +1,13 @@
 import { FastifyReply } from "fastify";
-import { CreateChatInfoDto, ChatDto } from './chats.types';
+import { CreateChatInfoDto, CreateChatDto } from './chats.types';
 import { createNewChat, getChatListForUserId, getChatForMemberIds } from './chats.repositories';
-import { v4 as uuidv4 } from 'uuid';
+import { randomUUID } from "crypto";
+import { getNewChatFrontDto } from "./chats.adapters";
 class ChatsService {
     async getChatListForUserId(user_id: string, reply: FastifyReply) {
         const chats_list = await getChatListForUserId(user_id);
-        console.log(chats_list)
-        reply.send(chats_list)
+
+        reply.send(chats_list);
     }
 
     async createChat(user_id: string, chat_info: CreateChatInfoDto, reply: FastifyReply) {
@@ -19,7 +20,6 @@ class ChatsService {
         const member_ids = chat_info.members;
 
         const chat = await getChatForMemberIds(member_ids);
-        
         if (chat) {
             reply.status(403).send({
                 error: 'chat_already_created',
@@ -30,15 +30,20 @@ class ChatsService {
             return
         }
 
-        const createChatInfo: ChatDto = {
+        const createChatInfo: CreateChatDto = {
             ...chat_info,
             owner_id: user_id,
-            chat_id: uuidv4()
+            chat_id: randomUUID(),
+            first_message_id: randomUUID()
         }
-
+        // это говнище нужно нормально типизировать, иначе выходит пиздец
         const new_chat = await createNewChat(createChatInfo);
-        reply.send(new_chat);
+
+        const new_chat_dto = getNewChatFrontDto(new_chat);
+
+        reply.send(new_chat_dto);
     }
+
 }
 
 export default new ChatsService()

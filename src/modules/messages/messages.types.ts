@@ -9,6 +9,7 @@ export interface SendMessageDto {
 
 export interface MessageDto extends SendMessageDto{
     owner_id: string,
+    message_id: string
 }
 
 export type SendMessageRequest = FastifyRequest<{ Body: SendMessageDto }> & { user: { user_id: string } }

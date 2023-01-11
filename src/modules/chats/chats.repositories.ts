@@ -1,5 +1,6 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../../utils/prisma";
-import { ChatDto } from "./chats.types";
+import { CreateChatDto } from "./chats.types";
 
 export async function findChatForId(chat_id: string) {
     return prisma.chats_data.findUnique({
@@ -9,7 +10,7 @@ export async function findChatForId(chat_id: string) {
     })
 }
 
-export async function createNewChat(chat_info: ChatDto) {
+export async function createNewChat(chat_info: CreateChatDto) {
     try {
         return await prisma.chats_data.create({
             data: {
@@ -28,10 +29,24 @@ export async function createNewChat(chat_info: ChatDto) {
                 messages: {
                     create: [
                         { 
+                            message_id: chat_info.first_message_id,
                             owner_id: chat_info.owner_id,
                             message_text: chat_info.start_message
                          }
-                    ]
+                    ],
+                },
+            },
+            include: {
+                messages: {
+                    select: {
+                        message_id: true,
+                        owner_id: true,
+                        owner: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -76,12 +91,16 @@ export async function getChatListForUserId(user_id: string) {
 
 export async function getChatForMemberIds(member_ids: Array<string>) {
     try {
-        return prisma.chats_members_data.findFirst({
+        return prisma.chats_data.findFirst({
             where: {
-                user_id: {
-                    in: member_ids
+                member: {
+                    every: {
+                        user_id: {
+                            in: member_ids
+                        }
+                    }
                 }
-            },
+            }
         })
     } catch(e) {
         console.log(e)

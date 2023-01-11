@@ -51,8 +51,8 @@ model Chats_members_data {
 }
 
 model Messages_data {
-  id Int @id @default(autoincrement())
   chat_id String
+  message_id String @id @unique @default(uuid())
   chat Chats_data @relation(fields: chat_id, references: chat_id)
   owner_id String @db.Uuid
   owner Profile_data @relation(fields: owner_id, references: user_id)

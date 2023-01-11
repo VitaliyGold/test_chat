@@ -12,6 +12,41 @@ export interface ChatDto extends CreateChatInfoDto {
     owner_id: string
 }
 
+export interface CreateChatDto extends ChatDto {
+    first_message_id: string
+}
+
+
+interface CreateChatMessage {
+    message_id: string,
+    owner_id: string,
+    owner: {
+        name: string
+    }
+}
+
+export interface CreatedChatDtoDb {
+    id: number,
+    chat_type: number,
+    chat_id: string,
+    owner_id: string,
+    createdAt: string,
+    messages: CreateChatMessage[]
+}
+
+export interface CreatedChatDtoToFront {
+    id: number,
+    chat_type: number,
+    chat_id: string,
+    owner_id: string,
+    createdAt: string,
+    firstMessage: {
+        message_id: string,
+        owner_id: string,
+        owner_name: string
+    }
+}
+
 
 
 export type CreateChatRequest = FastifyRequest<{ Body: CreateChatInfoDto }>;
