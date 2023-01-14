@@ -9,7 +9,7 @@ class UsersService {
     }
     async getUsers(name = '', page = 0, user_id: string, reply: FastifyReply) {
         const users_list = await getUsersList(name.toLowerCase(), Number(page), 50, user_id);
-
+        console.log(users_list);
         const users_with_chats: UsersList = [];
         // помечаем есть ли у текущего пользователя чат с данным пользователем
         for (let user of users_list) {
@@ -19,7 +19,7 @@ class UsersService {
             }
 
             const chat_id = user.chats_members_list.length ? user.chats_members_list[0].chat_id : null;
-            
+
             users_with_chats.push({
                 user_id: user.user_id,
                 name: user.name,

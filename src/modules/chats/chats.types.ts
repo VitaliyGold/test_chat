@@ -20,30 +20,44 @@ export interface CreateChatDto extends ChatDto {
 interface CreateChatMessage {
     message_id: string,
     owner_id: string,
+    message_text: string,
+    createdAt: string,
     owner: {
         name: string
     }
 }
 
+interface ChatMemberDtoDb {
+    user_id: string,
+    user: {
+        name: string
+    }
+}
+
 export interface CreatedChatDtoDb {
-    id: number,
-    chat_type: number,
     chat_id: string,
     owner_id: string,
     createdAt: string,
+    member: ChatMemberDtoDb[]
     messages: CreateChatMessage[]
 }
 
+interface ChatMemberDtoFront {
+    name: string,
+    userId: string
+}
+
 export interface CreatedChatDtoToFront {
-    id: number,
-    chat_type: number,
-    chat_id: string,
-    owner_id: string,
+    chatId: string,
+    ownerId: string,
     createdAt: string,
+    members: ChatMemberDtoFront[]
     firstMessage: {
-        message_id: string,
-        owner_id: string,
-        owner_name: string
+        messageId: string,
+        ownerId: string,
+        ownerName: string,
+        messageText: string,
+        createdAt: string
     }
 }
 

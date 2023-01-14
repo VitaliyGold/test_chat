@@ -31,10 +31,18 @@ export async function getUsersList(name: string, from = 0, count = 50, user_id: 
             user_id: true,
             chats_members_list: {
                 where: {
-                    user_id: user_id
+                    chat: {
+                        member: {
+                            some: {
+                                user_id
+                            }
+                        }
+                    }
                 }
-            }
+                
+            },
         },
+        
         skip: from, 
         take: count
         

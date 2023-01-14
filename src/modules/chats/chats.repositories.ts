@@ -36,11 +36,28 @@ export async function createNewChat(chat_info: CreateChatDto) {
                     ],
                 },
             },
-            include: {
+            select: {
+                id: false,
+                chat_type: false,
+                chat_id: true,
+                createdAt: true,
+                owner_id: true,
+                member: {
+                    select: {
+                        user_id: true,
+                        user: {
+                            select: {
+                                name: true
+                            }
+                        }
+                    }
+                },
                 messages: {
                     select: {
                         message_id: true,
                         owner_id: true,
+                        createdAt: true,
+                        message_text: true,
                         owner: {
                             select: {
                                 name: true
