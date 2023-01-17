@@ -7,6 +7,7 @@ const chatsRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
     fastify.post('/createChat', ChatsController.CreateChatHandler)
     
+    fastify.get('/getChat', ChatsController.GetChatForIdHandler)
 }
 
 export default chatsRoute;

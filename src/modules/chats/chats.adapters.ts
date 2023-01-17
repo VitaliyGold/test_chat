@@ -24,3 +24,9 @@ export function getNewChatFrontDto(chat_data: CreatedChatDtoDb): CreatedChatDtoT
     }
 
 }
+
+/*
+export getNewChatFrontDto(chatData) {
+
+}
+*/

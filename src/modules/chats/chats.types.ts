@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
-
+import { AuthRequestParams } from '../auth/types';
 
 export interface CreateChatInfoDto {
     members: Array<string>,
@@ -63,4 +63,8 @@ export interface CreatedChatDtoToFront {
 
 
 
-export type CreateChatRequest = FastifyRequest<{ Body: CreateChatInfoDto }>;
+export type CreateChatRequest = FastifyRequest<{ Body: CreateChatInfoDto }> & AuthRequestParams;
+
+export type GetChatsRequest = FastifyRequest & AuthRequestParams; 
+
+export type GetChatForIdRequest = FastifyRequest<{ Querystring: { chatId: string } }> & AuthRequestParams;

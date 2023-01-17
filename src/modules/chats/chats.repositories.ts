@@ -1,11 +1,22 @@
-import { Prisma } from "@prisma/client";
 import prisma from "../../utils/prisma";
 import { CreateChatDto } from "./chats.types";
 
-export async function findChatForId(chat_id: string) {
+export async function getChatForId(chat_id: string) {
     return prisma.chats_data.findUnique({
         where: {
             chat_id: chat_id
+        },
+        include: {
+            member: {
+                select: {
+                    user_id: true,
+                    user: {
+                        select: {
+                            name: true
+                        }
+                    }
+                }
+            }
         }
     })
 }

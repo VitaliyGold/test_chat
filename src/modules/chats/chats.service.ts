@@ -1,6 +1,6 @@
 import { FastifyReply } from "fastify";
 import { CreateChatInfoDto, CreateChatDto } from './chats.types';
-import { createNewChat, getChatListForUserId, getChatForMemberIds } from './chats.repositories';
+import { createNewChat, getChatListForUserId, getChatForMemberIds, getChatForId } from './chats.repositories';
 import { randomUUID } from "crypto";
 import { getNewChatFrontDto } from "./chats.adapters";
 class ChatsService {
@@ -42,6 +42,14 @@ class ChatsService {
         const new_chat_dto = getNewChatFrontDto(new_chat);
 
         reply.send(new_chat_dto);
+    }
+
+    async getChatForId(userId: string, chatId: string, reply: FastifyReply) {
+
+        const chat = await getChatForId(chatId);
+
+        reply.send(chat);
+
     }
 
 }
