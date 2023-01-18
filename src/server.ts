@@ -1,21 +1,21 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-const querystring = require('querystring')
+const querystring = require('querystring');
 
 import Fastify from 'fastify';
 import app from './app';
 
 const server = Fastify({ 
-    logger: false,
-    querystringParser: str => querystring.parse(str.toLowerCase()),
-})
+	logger: false,
+	querystringParser: str => querystring.parse(str.toLowerCase()),
+});
 
 server
-    .register(app)
-    .then(() => {
-        return server.ready()
-    })
-    .then(() => server.listen({ port: 5000 }, (err) => {
-        if (err) throw err;
-    }))
+	.register(app)
+	.then(() => {
+		return server.ready();
+	})
+	.then(() => server.listen({ port: 5000 }, (err) => {
+		if (err) throw err;
+	}));
 

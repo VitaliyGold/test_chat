@@ -1,11 +1,11 @@
-import { FastifyPluginAsync } from 'fastify'
+import { FastifyPluginAsync } from 'fastify';
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-    fastify.post('/',  {
+	fastify.post('/',  {
         
-    }, function(req, reply) {
-        return reply.send('Все ок')
-    })
-}
+	}, function(req, reply) {
+		return reply.send('Все ок');
+	});
+};
 
 export default root;

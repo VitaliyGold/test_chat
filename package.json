@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc -p & tsconfig.json -w",
     "dev": "ts-node-dev src/server.ts",
-    "migrations": "npx prisma migrate dev --name init"
+    "migrations": "npx prisma migrate dev --name init",
+    "lint": "eslint \"./**/*.ts\" --quiet",
+    "lint-fix": "eslint \"./**/*.ts\" --fix"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +21,7 @@
     "@fastify/session": "^10.0.1",
     "@prisma/client": "^4.5.0",
     "@types/bcrypt": "^5.0.0",
+    "@types/eslint": "^8.4.10",
     "bcrypt": "^5.1.0",
     "concurrently": "^7.5.0",
     "dotenv": "^16.0.3",
@@ -38,6 +41,9 @@
     "@types/node": "^18.11.0",
     "@types/pg": "^8.6.5",
     "@types/qs": "^6.9.7",
+    "@typescript-eslint/eslint-plugin": "^5.48.2",
+    "@typescript-eslint/parser": "^5.48.2",
+    "eslint": "^8.32.0",
     "nodemon": "^2.0.20",
     "prisma": "^4.5.0",
     "ts-node": "^10.9.1",

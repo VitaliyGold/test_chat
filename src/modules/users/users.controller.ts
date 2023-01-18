@@ -4,21 +4,21 @@ import { GetUserByIdRequest, GetUsersList } from './users.types';
 
 class UserController {
     
-    getUsersListHandler(request: GetUsersList, reply: FastifyReply) {
+	getUsersListHandler(request: GetUsersList, reply: FastifyReply) {
 
-        const { user_id } = request.user;
-        let { name, page } = request.query;
+		const { user_id } = request.user;
+		const { name, page } = request.query;
 
-        return UsersService.getUsers(name, page, user_id, reply)
-    }
-    getUserByIdHandler(request: GetUserByIdRequest, reply: FastifyReply) {
+		return UsersService.getUsers(name, page, user_id, reply);
+	}
+	getUserByIdHandler(request: GetUserByIdRequest, reply: FastifyReply) {
 
-        const { userId } = request.params;
+		const { userId } = request.params;
 
-        return UsersService.getUserById(userId, reply)
-    }
+		return UsersService.getUserById(userId, reply);
+	}
 
    
 }
 
-export default new UserController()
+export default new UserController();

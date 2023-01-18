@@ -8,126 +8,126 @@ const bcrypt = require('bcrypt');
 
 class AuthService {
 
-    async registration(fastify: FastifyInstance, request: RegistrationRequest, reply: FastifyReply) {
-        const { login, password, name } = request.body;
-        const user_with_login = await getUserByLogin(login)
-        if (user_with_login) {
-            return reply.status(400).send(AuthErrors.busy_login)
-        }
-        const user_id = uuidv4();
+	async registration(fastify: FastifyInstance, request: RegistrationRequest, reply: FastifyReply) {
+		const { login, password, name } = request.body;
+		const user_with_login = await getUserByLogin(login);
+		if (user_with_login) {
+			return reply.status(400).send(AuthErrors.busy_login);
+		}
+		const user_id = uuidv4();
 
-        const hashPassword = await bcrypt.hash(password, 10);
+		const hashPassword = await bcrypt.hash(password, 10);
 
-        const new_user = {
-            login,
-            password: hashPassword,
-            user_id,
-            name,
-            user_link: '',
-            avatar_link: ''
-        }
+		const new_user = {
+			login,
+			password: hashPassword,
+			user_id,
+			name,
+			user_link: '',
+			avatar_link: ''
+		};
 
-        await createNewUser(new_user);
+		await createNewUser(new_user);
 
-        const token = fastify.jwt.sign({
-            name: 'authToken',
-            user_id
-        }, {expiresIn: '1d'});
+		const token = fastify.jwt.sign({
+			name: 'authToken',
+			user_id
+		}, {expiresIn: '1d'});
 
-        const refreshToken = fastify.jwt.sign({
-            name: 'refreshToken',
-            user_id
-        }, {expiresIn: '2d'});
+		const refreshToken = fastify.jwt.sign({
+			name: 'refreshToken',
+			user_id
+		}, {expiresIn: '2d'});
 
-        return reply.code(200).setCookie('refreshToken', refreshToken, {
-            path: '/',
-            secure: false,
-            httpOnly: true,
-            sameSite: false
-          }).send({
-            token,
-            user_id
-        });
+		return reply.code(200).setCookie('refreshToken', refreshToken, {
+			path: '/',
+			secure: false,
+			httpOnly: true,
+			sameSite: false
+		}).send({
+			token,
+			user_id
+		});
         
-    }
-    async checkLogin(req: CheckLoginRequest, reply: FastifyReply) {
-        const { login } = req.body;
+	}
+	async checkLogin(req: CheckLoginRequest, reply: FastifyReply) {
+		const { login } = req.body;
 
-        const user = await getUserByLogin(login)
-        if (user) {
-            return reply.code(400).send(AuthErrors.busy_login)
-        }
-        return reply.code(200).send({
-            result: true
-        });
-    }
-    async login(fastify: FastifyInstance, req: LoginRequest, reply: FastifyReply) {
+		const user = await getUserByLogin(login);
+		if (user) {
+			return reply.code(400).send(AuthErrors.busy_login);
+		}
+		return reply.code(200).send({
+			result: true
+		});
+	}
+	async login(fastify: FastifyInstance, req: LoginRequest, reply: FastifyReply) {
 
-        const { login, password } = req.body;
+		const { login, password } = req.body;
 
-        const user = await getUserByLogin(login);
+		const user = await getUserByLogin(login);
 
-        if (!user) {
-            return reply.code(400).send(AuthErrors.user_not_exist)
-        };
+		if (!user) {
+			return reply.code(400).send(AuthErrors.user_not_exist);
+		}
 
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) {
-            return reply.code(400).send(AuthErrors.wrong_auth_data)
-        }
+		const validPassword = await bcrypt.compare(password, user.password);
+		if (!validPassword) {
+			return reply.code(400).send(AuthErrors.wrong_auth_data);
+		}
 
-        const token = fastify.jwt.sign({
-            name: 'authToken',
-            user_id: user.user_id
-        }, {expiresIn: '1d'});
+		const token = fastify.jwt.sign({
+			name: 'authToken',
+			user_id: user.user_id
+		}, {expiresIn: '1d'});
 
-        const refreshToken = fastify.jwt.sign({
-                name: 'refreshToken',
-                user_id: user.user_id
-            }, {expiresIn: '2d'});
+		const refreshToken = fastify.jwt.sign({
+			name: 'refreshToken',
+			user_id: user.user_id
+		}, {expiresIn: '2d'});
 
-        return reply.code(200).setCookie('refreshToken', refreshToken, {
-            path: '/',
-            secure: false,
-            httpOnly: true,
-            sameSite: false
-          }).send({
-            token,
-            user_id: user.user_id
-        });
+		return reply.code(200).setCookie('refreshToken', refreshToken, {
+			path: '/',
+			secure: false,
+			httpOnly: true,
+			sameSite: false
+		}).send({
+			token,
+			user_id: user.user_id
+		});
 
-    }
-    async refresh(fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
+	}
+	async refresh(fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
         
-        // @ts-ignore
-        const { user_id } = await req.jwtVerify({ onlyCookie: true })
+		// @ts-ignore
+		const { user_id } = await req.jwtVerify({ onlyCookie: true });
 
-        if (!user_id) {
-            return reply.status(401).send('Внутри нет токена пользователя')
-        }
+		if (!user_id) {
+			return reply.status(401).send('Внутри нет токена пользователя');
+		}
 
-        const token = fastify.jwt.sign({
-            name: 'authToken',
-            user_id: user_id
-        }, {expiresIn: '1d'});
+		const token = fastify.jwt.sign({
+			name: 'authToken',
+			user_id: user_id
+		}, {expiresIn: '1d'});
 
-        const refreshToken = fastify.jwt.sign({
-            name: 'refreshToken',
-            user_id
-        }, {expiresIn: '2d'});
+		const refreshToken = fastify.jwt.sign({
+			name: 'refreshToken',
+			user_id
+		}, {expiresIn: '2d'});
         
-        return reply.status(200).
-            setCookie('refreshToken', refreshToken, {
-                path: '/',
-                secure: false,
-                httpOnly: true,
-                sameSite: false
-            })
-            .send({
-                token
-            })
-    }
+		return reply.status(200).
+			setCookie('refreshToken', refreshToken, {
+				path: '/',
+				secure: false,
+				httpOnly: true,
+				sameSite: false
+			})
+			.send({
+				token
+			});
+	}
     
 }
 
-export default new AuthService()
+export default new AuthService();
