@@ -4,25 +4,25 @@ import { sendMessage, getMessageList } from './messages.repositories';
 import { randomUUID } from 'crypto';
 
 class MessagesService {
-	async sendMessage(user_id: string, message_info: SendMessageDto, reply: FastifyReply) {
+	async sendMessage(userId, messageInfo, reply: FastifyReply) {
 
 		const message = {
-			...message_info,
-			owner_id: user_id,
-			message_id: randomUUID()
+			...messageInfo,
+			ownerId: userId,
+			messageId: randomUUID()
 		};
 
-		const chats_list = await sendMessage(message);
-		reply.send(chats_list);
+		const chatsList = await sendMessage(message);
+		reply.send(chatsList);
 	}
 
-	async getList(user_id: string, chat_id: string, page: number, reply: FastifyReply) {
+	async getList(userId, chatId, page: number, reply: FastifyReply) {
 
 		// вот тут должна быть проверка, может ли пользователь получить этот чат
  
-		const message_list = await getMessageList(chat_id, page);
+		const messageList = await getMessageList(chatId, page);
 
-		reply.send(message_list);
+		reply.send(messageList);
 	}
 }
 

@@ -1,16 +1,16 @@
 import prisma from '../../utils/prisma';
 
 export async function getUserProfileById(id: string) {
-	return prisma.profile_data.findUnique({
+	return prisma.profileData.findUnique({
 		where: {
-			user_id: id
+			userId: id
 		},
 		select: {
 			name: true,
-			user_id: true,
-			chats_data: {
+			userId: true,
+			chatsData: {
 				select: {
-					chat_id: true
+					chatId: true
 				}
 			}
 		}
@@ -18,8 +18,8 @@ export async function getUserProfileById(id: string) {
 }
 
 
-export async function getUsersList(name: string, from = 0, count = 50, user_id: string) {
-	return prisma.profile_data.findMany({
+export async function getUsersList(name: string, from = 0, count = 50, userId) {
+	return prisma.profileData.findMany({
 		where: {
 			name: {
 				contains: name,
@@ -28,13 +28,13 @@ export async function getUsersList(name: string, from = 0, count = 50, user_id: 
 		},
 		select: {
 			name: true,
-			user_id: true,
-			chats_members_list: {
+			userId: true,
+			chatsMembersList: {
 				where: {
 					chat: {
 						member: {
 							some: {
-								user_id
+								userId
 							}
 						}
 					}

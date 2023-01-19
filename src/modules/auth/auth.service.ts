@@ -10,33 +10,33 @@ class AuthService {
 
 	async registration(fastify: FastifyInstance, request: RegistrationRequest, reply: FastifyReply) {
 		const { login, password, name } = request.body;
-		const user_with_login = await getUserByLogin(login);
-		if (user_with_login) {
-			return reply.status(400).send(AuthErrors.busy_login);
+		const userWithLogin = await getUserByLogin(login);
+		if (userWithLogin) {
+			return reply.status(400).send(AuthErrors.busyLogin);
 		}
-		const user_id = uuidv4();
+		const userId = uuidv4();
 
 		const hashPassword = await bcrypt.hash(password, 10);
 
-		const new_user = {
+		const newUser = {
 			login,
 			password: hashPassword,
-			user_id,
+			userId,
 			name,
-			user_link: '',
-			avatar_link: ''
+			userLink: '',
+			avatarLink: ''
 		};
 
-		await createNewUser(new_user);
+		await createNewUser(newUser);
 
 		const token = fastify.jwt.sign({
 			name: 'authToken',
-			user_id
+			userId
 		}, {expiresIn: '1d'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
-			user_id
+			userId
 		}, {expiresIn: '2d'});
 
 		return reply.code(200).setCookie('refreshToken', refreshToken, {
@@ -46,7 +46,7 @@ class AuthService {
 			sameSite: false
 		}).send({
 			token,
-			user_id
+			userId
 		});
         
 	}
@@ -55,7 +55,7 @@ class AuthService {
 
 		const user = await getUserByLogin(login);
 		if (user) {
-			return reply.code(400).send(AuthErrors.busy_login);
+			return reply.code(400).send(AuthErrors.busyLogin);
 		}
 		return reply.code(200).send({
 			result: true
@@ -68,22 +68,22 @@ class AuthService {
 		const user = await getUserByLogin(login);
 
 		if (!user) {
-			return reply.code(400).send(AuthErrors.user_not_exist);
+			return reply.code(400).send(AuthErrors.userNotExist);
 		}
 
 		const validPassword = await bcrypt.compare(password, user.password);
 		if (!validPassword) {
-			return reply.code(400).send(AuthErrors.wrong_auth_data);
+			return reply.code(400).send(AuthErrors.wrongAuthData);
 		}
 
 		const token = fastify.jwt.sign({
 			name: 'authToken',
-			user_id: user.user_id
+			userId: user.userId
 		}, {expiresIn: '1d'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
-			user_id: user.user_id
+			userId: user.userId
 		}, {expiresIn: '2d'});
 
 		return reply.code(200).setCookie('refreshToken', refreshToken, {
@@ -93,27 +93,27 @@ class AuthService {
 			sameSite: false
 		}).send({
 			token,
-			user_id: user.user_id
+			userId: user.userId
 		});
 
 	}
 	async refresh(fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
         
 		// @ts-ignore
-		const { user_id } = await req.jwtVerify({ onlyCookie: true });
+		const { userId } = await req.jwtVerify({ onlyCookie: true });
 
-		if (!user_id) {
+		if (!userId) {
 			return reply.status(401).send('Внутри нет токена пользователя');
 		}
 
 		const token = fastify.jwt.sign({
 			name: 'authToken',
-			user_id: user_id
+			userId: userId
 		}, {expiresIn: '1d'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
-			user_id
+			userId
 		}, {expiresIn: '2d'});
         
 		return reply.status(200).

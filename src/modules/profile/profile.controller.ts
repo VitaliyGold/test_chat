@@ -6,9 +6,9 @@ class ProfileController {
     
 	getUserProfileHandler(request: GetProfile, reply: FastifyReply) {
 
-		const { user_id } = request.user;
+		const { userId } = request.user;
 
-		return ProfileService.getProfile(user_id, reply);
+		return ProfileService.getProfile(userId, reply);
 
 	}
 

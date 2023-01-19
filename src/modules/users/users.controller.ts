@@ -6,10 +6,10 @@ class UserController {
     
 	getUsersListHandler(request: GetUsersList, reply: FastifyReply) {
 
-		const { user_id } = request.user;
+		const { userId } = request.user;
 		const { name, page } = request.query;
 
-		return UsersService.getUsers(name, page, user_id, reply);
+		return UsersService.getUsers(name, page, userId, reply);
 	}
 	getUserByIdHandler(request: GetUserByIdRequest, reply: FastifyReply) {
 

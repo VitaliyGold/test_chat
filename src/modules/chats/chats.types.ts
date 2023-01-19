@@ -3,24 +3,24 @@ import { AuthRequestParams } from '../auth/types';
 
 export interface CreateChatInfoDto {
     members: Array<string>,
-    chat_type: 1 | 2 | 3,
-    start_message: string
+    chatType: 1 | 2 | 3,
+    startMessage: string
 }
 
 export interface ChatDto extends CreateChatInfoDto {
-    chat_id: string,
-    owner_id: string
+    chatId: string,
+    ownerId: string
 }
 
 export interface CreateChatDto extends ChatDto {
-    first_message_id: string
+    firstMessageId: string
 }
 
 
 interface CreateChatMessage {
-    message_id: string,
-    owner_id: string,
-    message_text: string,
+    messageId: string,
+    ownerId: string,
+    messageText: string,
     createdAt: string,
     owner: {
         name: string
@@ -28,15 +28,15 @@ interface CreateChatMessage {
 }
 
 interface ChatMemberDtoDb {
-    user_id: string,
+    userId: string,
     user: {
         name: string
     }
 }
 
 export interface CreatedChatDtoDb {
-    chat_id: string,
-    owner_id: string,
+    chatId: string,
+    ownerId: string,
     createdAt: string,
     member: ChatMemberDtoDb[]
     messages: CreateChatMessage[]

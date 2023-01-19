@@ -14,29 +14,29 @@ model Auth_data {
   login String @unique
   password String
   Profile Profile_data?
-  user_id String @unique @db.Uuid
+  userId String @unique @db.Uuid
 }
 
 model Profile_data {
   name String
-  auth_data Auth_data @relation(fields: user_id, references: user_id)
-  user_id String @unique @db.Uuid
-  avatar_link String @default("")
-  user_link String @default("")
-  chats_members_list Chats_members_data[]
-  chats_data Chats_data[]
+  authData Auth_data @relation(fields: userId, references: userId)
+  userId String @unique @db.Uuid
+  avatarLink String @default("")
+  userLink String @default("")
+  chatsMembersList Chats_members_data[]
+  chatsData Chats_data[]
   messages Messages_data[]
-  @@id([user_id])
+  @@id([userId])
   createdAt DateTime @default(now())
 }
 
 
 model Chats_data {
   id Int @id @default(autoincrement())
-  chat_type Int
-  chat_id String @unique
-  owner Profile_data @relation(fields: [owner_id], references: [user_id])
-  owner_id String @db.Uuid
+  chatType Int
+  chatId String @unique
+  owner Profile_data @relation(fields: [ownerId], references: [userId])
+  ownerId String @db.Uuid
   member Chats_members_data[]
   messages Messages_data[]
   createdAt DateTime @default(now())
@@ -44,18 +44,18 @@ model Chats_data {
 
 model Chats_members_data {
   id Int @id @default(autoincrement())
-  chat_id String
-  user_id String @db.Uuid
-  chat Chats_data @relation(fields: chat_id, references: chat_id)
-  user Profile_data @relation(fields: [user_id], references: [user_id])
+  chatId String
+  userId String @db.Uuid
+  chat Chats_data @relation(fields: chatId, references: chatId)
+  user Profile_data @relation(fields: [userId], references: [userId])
 }
 
 model Messages_data {
-  chat_id String
-  message_id String @id @unique @default(uuid())
-  chat Chats_data @relation(fields: chat_id, references: chat_id)
-  owner_id String @db.Uuid
-  owner Profile_data @relation(fields: owner_id, references: user_id)
-  message_text String
+  chatId String
+  messageId String @id @unique @default(uuid())
+  chat Chats_data @relation(fields: chatId, references: chatId)
+  ownerId String @db.Uuid
+  owner Profile_data @relation(fields: ownerId, references: userId)
+  messageText String
   createdAt DateTime @default(now())
 }

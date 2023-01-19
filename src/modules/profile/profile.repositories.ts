@@ -1,15 +1,15 @@
 import prisma from '../../utils/prisma';
 
-export function getProfile(user_id: string) {
-	return prisma.profile_data.findUnique({
+export function getProfile(userId) {
+	return prisma.profileData.findUnique({
 		where: {
-			user_id
+			userId
 		},
 		select: {
 			name: true,
-			user_id: true,
-			user_link: true,
-			avatar_link: true
+			userId: true,
+			userLink: true,
+			avatarLink: true
 		}
 	});
 }

@@ -6,8 +6,8 @@ import { buildJsonSchemas } from 'fastify-zod';
 const chatScheme = z.object({
 	message: z
 		.string({
-			required_error: 'Login is required field',
-			invalid_type_error: 'Login must be string'
+			requiredError: 'Login is required field',
+			invalidTypeError: 'Login must be string'
 		}),
     
 });

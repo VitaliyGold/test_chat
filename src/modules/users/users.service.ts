@@ -7,27 +7,27 @@ class UsersService {
 		const user = await getUserProfileById(id);
 		reply.send(user);
 	}
-	async getUsers(name = '', page = 0, user_id: string, reply: FastifyReply) {
-		const users_list = await getUsersList(name.toLowerCase(), Number(page), 50, user_id);
-		const users_with_chats: UsersList = [];
+	async getUsers(name = '', page = 0, userId, reply: FastifyReply) {
+		const usersList = await getUsersList(name.toLowerCase(), Number(page), 50, userId);
+		const usersWithChats = [];
 		// помечаем есть ли у текущего пользователя чат с данным пользователем
-		for (const user of users_list) {
+		for (const user of usersList) {
 
-			if (user.user_id === user_id) {
+			if (user.userId === userId) {
 				continue;
 			}
 
-			const chat_id = user.chats_members_list.length ? user.chats_members_list[0].chat_id : null;
+			const chatId = user.chatsMembersList.length ? user.chatsMembersList[0].chatId : null;
 
-			users_with_chats.push({
-				user_id: user.user_id,
+			usersWithChats.push({
+				userId: user.userId,
 				name: user.name,
-				have_chat: !!user.chats_members_list.length,
-				chat_id 
+				haveChat: !!user.chatsMembersList.length,
+				chatId 
 			});
 		}
 
-		reply.send(users_with_chats);
+		reply.send(usersWithChats);
 	}
 }
 

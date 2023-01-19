@@ -2,9 +2,9 @@ import { FastifyReply } from 'fastify';
 import { getProfile } from './profile.repositories';
 
 class ProfileService {
-	async getProfile(user_id: string, reply: FastifyReply) {
+	async getProfile(userId, reply: FastifyReply) {
 
-		const profile = await getProfile(user_id);
+		const profile = await getProfile(userId);
 		reply.send(profile);
 
 	}

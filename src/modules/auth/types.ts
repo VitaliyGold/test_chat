@@ -3,11 +3,11 @@ import { UserRegistrationScheme, UserLoginScheme } from './auth.scheme';
 
 export interface CreateUserDto {
     login: string,
-    user_id: string,
+    userId: string,
     password: string,
     name: string,
-    user_link: string,
-    avatar_link: string
+    userLink: string,
+    avatarLink: string
 }
 
 export interface LoginDto {
@@ -22,4 +22,4 @@ export type RegistrationRequest = FastifyRequest<{Body: UserRegistrationScheme}>
 
 export type LoginRequest = FastifyRequest<{Body: UserLoginScheme}>
 
-export type AuthRequestParams = { user: { user_id: string } }
+export type AuthRequestParams = { user: { userId: string } }

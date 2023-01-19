@@ -2,16 +2,16 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { AuthRequestParams } from '../auth/types';
 
 export interface SendMessageDto {
-    message_type: 1 | 2 | 3,
-    message_text: string,
-    chat_id: string,
+    messageType: 1 | 2 | 3,
+    messageText: string,
+    chatId: string,
 }
 
 export interface MessageDto extends SendMessageDto{
-    owner_id: string,
-    message_id: string
+    ownerId: string,
+    messageId: string
 }
 
-export type SendMessageRequest = FastifyRequest<{ Body: SendMessageDto }> & { user: { user_id: string } }
+export type SendMessageRequest = FastifyRequest<{ Body: SendMessageDto }> & { user: { userId: string } }
 
-export type GetMessageListRequest = FastifyRequest<{ Querystring: { chat_id: string, page: number } }> & { user: { user_id: string } }
+export type GetMessageListRequest = FastifyRequest<{ Querystring: { chatId: string, page: number } }> & { user: { userId: string } }

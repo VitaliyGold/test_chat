@@ -4,11 +4,11 @@ import { MessageDto } from './messages.types';
 
 // тут нужно добавить тип возвращаемого объекта
 export async function sendMessage(message: MessageDto) {
-	return prisma.messages_data.create({
+	return prisma.messagesData.create({
 		data: {
-			chat_id: message.chat_id,
-			owner_id: message.owner_id,
-			message_text: message.message_text
+			chatId: message.chatId,
+			ownerId: message.ownerId,
+			messageText: message.messageText
 		}
 	});
 }
@@ -17,9 +17,9 @@ export async function sendMessage(message: MessageDto) {
 export async function getMessageList(chatId: string, skipNumber: number) {
 
 	try {
-		return prisma.messages_data.findMany({
+		return prisma.messagesData.findMany({
 			where: {
-				chat_id: chatId
+				chatId: chatId
 			},
 			take: 50,
 			skip: skipNumber,

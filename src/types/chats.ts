@@ -9,18 +9,18 @@ enum ChatTypes{
 }
 
 export interface createChatDto {
-    chat_type: ChatTypes,
-    owner_id: string,
-    members_list: string,
-    chat_name: string | null
+    chatType: ChatTypes,
+    ownerId: string,
+    membersList: string,
+    chatName: string | null
 }
 
 export interface ChatDto {
-    chat_type: ChatTypes,
-    chat_id: string,
-    owner_id: string,
-    members_table_id: string,
-    members_list: string,
-    chat_name: string | null,
+    chatType: ChatTypes,
+    chatId: string,
+    ownerId: string,
+    membersTableId: string,
+    membersList: string,
+    chatName: string | null,
     lastMessage: MessageDto | null
 }

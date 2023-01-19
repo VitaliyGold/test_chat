@@ -12,10 +12,10 @@ export type GetUsersList = FastifyRequest<{ Querystring: GetUsersFilter }> & Aut
 
 
 export type UserWithChats = {
-    user_id: string,
+    userId: string,
     name: string,
-    have_chat: boolean,
-    chat_id: string | null
+    haveChat: boolean,
+    chatId: string | null
 }
 
 export type UsersList = Array<UserWithChats>

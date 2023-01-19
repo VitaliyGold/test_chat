@@ -5,16 +5,16 @@ import { SendMessageRequest, GetMessageListRequest } from './messages.types';
 
 class MessagesController {
 	async SendMessagesHandler(request: SendMessageRequest, reply: FastifyReply) {
-		const { user_id } = request.user;
-		const chat_info = request.body;
-		return MessagesService.sendMessage(user_id, chat_info, reply);
+		const { userId } = request.user;
+		const chatInfo = request.body;
+		return MessagesService.sendMessage(userId, chatInfo, reply);
 	}
 
 	async GetMessagesList(request: GetMessageListRequest, reply: FastifyReply) {
-		const { user_id } = request.user;
-		let { chat_id, page } = request.query;
+		const { userId } = request.user;
+		let { chatId, page } = request.query;
 		if (!page) page = 0;
-		return MessagesService.getList(user_id, chat_id, page, reply);
+		return MessagesService.getList(userId, chatId, page, reply);
 	}
    
 }

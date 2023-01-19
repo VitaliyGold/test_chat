@@ -4,23 +4,23 @@ import { CreateChatRequest, GetChatsRequest, GetChatForIdRequest } from './chats
 
 class ChatsController {
 	async CreateChatHandler(request: CreateChatRequest, reply: FastifyReply) {
-		const { user_id } = request.user;
-		const chat_info = request.body;
-		return ChatsService.createChat(user_id, chat_info, reply);
+		const { userId } = request.user;
+		const chatInfo = request.body;
+		return ChatsService.createChat(userId, chatInfo, reply);
 	}
 
 	async GetChatsHandler(request: GetChatsRequest, reply: FastifyReply) {
-		const { user_id } = request.user;
+		const { userId } = request.user;
 
-		return ChatsService.getChatListForUserId(user_id, reply);
+		return ChatsService.getChatListForUserId(userId, reply);
 	}
 
 	async GetChatForIdHandler(request: GetChatForIdRequest, reply: FastifyReply) {
-		const { user_id } = request.user;
+		const { userId } = request.user;
 
 		const { chatId } = request.query;
 
-		return ChatsService.getChatForId(user_id, chatId, reply);
+		return ChatsService.getChatForId(userId, chatId, reply);
 	}
 
    

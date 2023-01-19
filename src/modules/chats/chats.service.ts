@@ -4,44 +4,44 @@ import { createNewChat, getChatListForUserId, getChatForMemberIds, getChatForId 
 import { randomUUID } from 'crypto';
 import { getNewChatFrontDto } from './chats.adapters';
 class ChatsService {
-	async getChatListForUserId(user_id: string, reply: FastifyReply) {
-		const chats_list = await getChatListForUserId(user_id);
+	async getChatListForUserId(userId, reply: FastifyReply) {
+		const chatsList = await getChatListForUserId(userId);
 
-		reply.send(chats_list);
+		reply.send(chatsList);
 	}
 
-	async createChat(user_id: string, chat_info: CreateChatInfoDto, reply: FastifyReply) {
+	async createChat(userId, chatInfo, reply: FastifyReply) {
 		// пока работаем только с первым типом - личными сообщениями
 		// проверить есть ли уже чат данного типа с пользователем
 		// если уже есть - вернуть ошибку и id чата
 		// если нет - создать новый чат, записать в таблицу chats_members_data пользователей
 		// создать первое сообщение в чате
 
-		const member_ids = chat_info.members;
+		const memberIds = chatInfo.members;
 
-		const chat = await getChatForMemberIds(member_ids);
+		const chat = await getChatForMemberIds(memberIds);
 		if (chat) {
 			reply.status(403).send({
 				error: 'chat_already_created',
 				statusCode: 403,
 				message: 'чат уже создан',
-				chat_id: chat.chat_id
+				chatId: chat.chatId
 			});
 			return;
 		}
 
 		const createChatInfo: CreateChatDto = {
-			...chat_info,
-			owner_id: user_id,
-			chat_id: randomUUID(),
-			first_message_id: randomUUID()
+			...chatInfo,
+			ownerId: userId,
+			chatId: randomUUID(),
+			firstMessageId: randomUUID()
 		};
 		// это говнище нужно нормально типизировать, иначе выходит пиздец
-		const new_chat = await createNewChat(createChatInfo);
+		const newChat = await createNewChat(createChatInfo);
 
-		const new_chat_dto = getNewChatFrontDto(new_chat);
+		const newChatDto = getNewChatFrontDto(newChat);
 
-		reply.send(new_chat_dto);
+		reply.send(newChatDto);
 	}
 
 	async getChatForId(userId: string, chatId: string, reply: FastifyReply) {

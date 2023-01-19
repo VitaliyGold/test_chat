@@ -1,15 +1,15 @@
 import prisma from '../../utils/prisma';
 import { CreateChatDto } from './chats.types';
 
-export async function getChatForId(chat_id: string) {
-	return prisma.chats_data.findUnique({
+export async function getChatForId(chatId) {
+	return prisma.chatsData.findUnique({
 		where: {
-			chat_id: chat_id
+			chatId: chatId
 		},
 		include: {
 			member: {
 				select: {
-					user_id: true,
+					userId: true,
 					user: {
 						select: {
 							name: true
@@ -21,41 +21,41 @@ export async function getChatForId(chat_id: string) {
 	});
 }
 
-export async function createNewChat(chat_info: CreateChatDto) {
+export async function createNewChat(chatInfo) {
 	try {
-		return await prisma.chats_data.create({
+		return await prisma.chatsData.create({
 			data: {
-				chat_id: chat_info.chat_id,
-				chat_type: chat_info.chat_type,
-				owner_id: chat_info.owner_id,
+				chatId: chatInfo.chatId,
+				chatType: chatInfo.chatType,
+				ownerId: chatInfo.ownerId,
 				member: {
 					createMany: {
 						data: [
-							{ user_id: chat_info.members[0] },
+							{ userId: chatInfo.members[0] },
                                 
-							{ user_id: chat_info.members[1] }
+							{ userId: chatInfo.members[1] }
 						]
 					}
 				},
 				messages: {
 					create: [
 						{ 
-							message_id: chat_info.first_message_id,
-							owner_id: chat_info.owner_id,
-							message_text: chat_info.start_message
+							messageId: chatInfo.firstMessageId,
+							ownerId: chatInfo.ownerId,
+							messageText: chatInfo.startMessage
 						}
 					],
 				},
 			},
 			select: {
 				id: false,
-				chat_type: false,
-				chat_id: true,
+				chatType: false,
+				chatId: true,
 				createdAt: true,
-				owner_id: true,
+				ownerId: true,
 				member: {
 					select: {
-						user_id: true,
+						userId: true,
 						user: {
 							select: {
 								name: true
@@ -65,10 +65,10 @@ export async function createNewChat(chat_info: CreateChatDto) {
 				},
 				messages: {
 					select: {
-						message_id: true,
-						owner_id: true,
+						messageId: true,
+						ownerId: true,
 						createdAt: true,
-						message_text: true,
+						messageText: true,
 						owner: {
 							select: {
 								name: true
@@ -84,12 +84,12 @@ export async function createNewChat(chat_info: CreateChatDto) {
     
 }
 
-export async function getChatListForUserId(user_id: string) {
-	console.log(user_id);
+export async function getChatListForUserId(userId) {
+	console.log(userId);
 	try {
-		return await prisma.chats_members_data.findMany({
+		return await prisma.chatsMembersData.findMany({
 			where: {
-				user_id: user_id,
+				userId: userId,
 			},
 			include: {
 				chat: {
@@ -117,14 +117,14 @@ export async function getChatListForUserId(user_id: string) {
     
 }
 
-export async function getChatForMemberIds(member_ids: Array<string>) {
+export async function getChatForMemberIds(memberIds) {
 	try {
-		return prisma.chats_data.findFirst({
+		return prisma.chatsData.findFirst({
 			where: {
 				member: {
 					every: {
-						user_id: {
-							in: member_ids
+						userId: {
+							in: memberIds
 						}
 					}
 				}

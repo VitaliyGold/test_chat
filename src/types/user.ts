@@ -7,6 +7,6 @@ export interface User {
 
 export type GetUserRequest = FastifyRequest<{
     Querystring: {
-        user_id: string
+        userId: string
     }
 }>
