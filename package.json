@@ -43,6 +43,7 @@
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^5.48.2",
     "@typescript-eslint/parser": "^5.48.2",
+    "eslint-plugin-es-lint-plugins": "file:es-lint-plugins",
     "eslint": "^8.32.0",
     "nodemon": "^2.0.20",
     "prisma": "^4.5.0",

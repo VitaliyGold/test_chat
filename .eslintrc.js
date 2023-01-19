@@ -13,7 +13,7 @@ module.exports = {
 		'sourceType': 'module'
 	},
 	'plugins': [
-		'noCamelCase',
+		'es-lint-plugins',
 		'@typescript-eslint'
 	],
 	'rules': {
@@ -33,8 +33,6 @@ module.exports = {
 			'error',
 			'always'
 		],
-		'camelcase': [
-			'error'
-		]
+		'es-lint-plugins/noCamesCase': 'error'
 	}
 };
