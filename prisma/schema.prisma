@@ -9,53 +9,53 @@ datasource db {
 }
 
 
-model Auth_data {
+model AuthData {
   id Int @id @default(autoincrement())
   login String @unique
   password String
-  Profile Profile_data?
+  Profile ProfileData?
   userId String @unique @db.Uuid
 }
 
-model Profile_data {
+model ProfileData {
   name String
-  authData Auth_data @relation(fields: userId, references: userId)
+  authData AuthData @relation(fields: userId, references: userId)
   userId String @unique @db.Uuid
   avatarLink String @default("")
   userLink String @default("")
-  chatsMembersList Chats_members_data[]
-  chatsData Chats_data[]
-  messages Messages_data[]
+  chatsMembersList ChatsMembersData[]
+  chatsData ChatsData[]
+  messages MessagesData[]
   @@id([userId])
   createdAt DateTime @default(now())
 }
 
 
-model Chats_data {
+model ChatsData {
   id Int @id @default(autoincrement())
   chatType Int
   chatId String @unique
-  owner Profile_data @relation(fields: [ownerId], references: [userId])
+  owner ProfileData @relation(fields: [ownerId], references: [userId])
   ownerId String @db.Uuid
-  member Chats_members_data[]
-  messages Messages_data[]
+  member ChatsMembersData[]
+  messages MessagesData[]
   createdAt DateTime @default(now())
 }
 
-model Chats_members_data {
+model ChatsMembersData {
   id Int @id @default(autoincrement())
   chatId String
   userId String @db.Uuid
-  chat Chats_data @relation(fields: chatId, references: chatId)
-  user Profile_data @relation(fields: [userId], references: [userId])
+  chat ChatsData @relation(fields: chatId, references: chatId)
+  user ProfileData @relation(fields: [userId], references: [userId])
 }
 
-model Messages_data {
+model MessagesData {
   chatId String
   messageId String @id @unique @default(uuid())
-  chat Chats_data @relation(fields: chatId, references: chatId)
+  chat ChatsData @relation(fields: chatId, references: chatId)
   ownerId String @db.Uuid
-  owner Profile_data @relation(fields: ownerId, references: userId)
+  owner ProfileData @relation(fields: ownerId, references: userId)
   messageText String
   createdAt DateTime @default(now())
 }

@@ -12,7 +12,8 @@ class MessagesController {
 
 	async GetMessagesList(request: GetMessageListRequest, reply: FastifyReply) {
 		const { userId } = request.user;
-		let { chatId, page } = request.query;
+		const { chatId } = request.query;
+		let { page } = request.query;
 		if (!page) page = 0;
 		return MessagesService.getList(userId, chatId, page, reply);
 	}

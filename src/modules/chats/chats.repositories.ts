@@ -1,7 +1,7 @@
 import prisma from '../../utils/prisma';
 import { CreateChatDto } from './chats.types';
 
-export async function getChatForId(chatId) {
+export async function getChatForId(chatId: string) {
 	return prisma.chatsData.findUnique({
 		where: {
 			chatId: chatId
@@ -21,7 +21,7 @@ export async function getChatForId(chatId) {
 	});
 }
 
-export async function createNewChat(chatInfo) {
+export async function createNewChat(chatInfo: CreateChatDto) {
 	try {
 		return await prisma.chatsData.create({
 			data: {
@@ -84,7 +84,7 @@ export async function createNewChat(chatInfo) {
     
 }
 
-export async function getChatListForUserId(userId) {
+export async function getChatListForUserId(userId: string) {
 	console.log(userId);
 	try {
 		return await prisma.chatsMembersData.findMany({
@@ -117,7 +117,7 @@ export async function getChatListForUserId(userId) {
     
 }
 
-export async function getChatForMemberIds(memberIds) {
+export async function getChatForMemberIds(memberIds: string[]) {
 	try {
 		return prisma.chatsData.findFirst({
 			where: {

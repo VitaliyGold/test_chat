@@ -1,9 +1,10 @@
 import { v4 as uuidv4 } from 'uuid';
-import { FastifyReply, FastifyInstance, FastifyRequest } from 'fastify';
-import { RegistrationRequest, CheckLoginRequest, LoginRequest,  } from './types';
+import { FastifyReply, FastifyInstance } from 'fastify';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshRequest } from './types';
 import { getUserByLogin, createNewUser } from './auth.repositories';
 import { AuthErrors } from './auth.errors';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const bcrypt = require('bcrypt');
 
 class AuthService {
@@ -97,8 +98,7 @@ class AuthService {
 		});
 
 	}
-	async refresh(fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply) {
-        
+	async refresh(fastify: FastifyInstance, req: RefreshRequest, reply: FastifyReply) {
 		// @ts-ignore
 		const { userId } = await req.jwtVerify({ onlyCookie: true });
 
@@ -115,9 +115,9 @@ class AuthService {
 			name: 'refreshToken',
 			userId
 		}, {expiresIn: '2d'});
-        
-		return reply.status(200).
-			setCookie('refreshToken', refreshToken, {
+
+		return reply.status(200)
+			.setCookie('refreshToken', refreshToken, {
 				path: '/',
 				secure: false,
 				httpOnly: true,

@@ -1,6 +1,7 @@
 import { join } from 'path';
 import fastifyAutoload from '@fastify/autoload';
 import { FastifyPluginAsync } from 'fastify';
+import { JWT } from '@fastify/jwt';
 
 
 const app: FastifyPluginAsync<FastifyPluginAsync> = async (
@@ -21,8 +22,8 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
 			const url = req.url.split('/');
 			if (url[1] !== 'auth') {
 				// @ts-ignore
-				const jwtKey = await req.jwtVerify();
-				if (jwtKey.name !== 'authToken') {
+				const { name } = await req.jwtVerify();
+				if (name !== 'authToken') {
 					return reply.status(401).send({
 						message: 'Invalid token',
 						status: 401
@@ -38,7 +39,9 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
 declare module 'fastify' {
     export interface FastifyInstance {
         authenticate: never,
+		jwt: JWT
     }
 }
+
 
 export default app;

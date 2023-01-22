@@ -33,9 +33,10 @@ module.exports = {
 			'error',
 			'always'
 		],
+		'@typescript-eslint/ban-ts-comment': 'off',
 		'camel-case/no-camel-case': 'error'
 	},
-	"ignorePatterns": [
-		"**/eslint-plugin-camel-case/*.ts"
+	'ignorePatterns': [
+		'**/eslint-plugin-camel-case/*.ts'
 	],
 };

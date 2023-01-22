@@ -1,5 +1,4 @@
-import { FastifyRequest, FastifyReply } from 'fastify';
-import { UserRegistrationScheme, UserLoginScheme } from './auth.scheme';
+import { FastifyRequest } from 'fastify';
 
 export interface CreateUserDto {
     login: string,
@@ -15,11 +14,25 @@ export interface LoginDto {
     password: string,
 }
 
+export interface UserRegistrationRequest {
+    login: string,
+    password: string,
+    name: string
+}
+
+export interface UserLoginRequest {
+    login: string,
+    password: string
+}
+
 
 export type CheckLoginRequest = FastifyRequest<{Body: { login: string }}>
 
-export type RegistrationRequest = FastifyRequest<{Body: UserRegistrationScheme}>
+export type RegistrationRequest = FastifyRequest<{Body: UserRegistrationRequest}>
 
-export type LoginRequest = FastifyRequest<{Body: UserLoginScheme}>
+export type LoginRequest = FastifyRequest<{Body: UserLoginRequest}>
+
+
+export type RefreshRequest = FastifyRequest & AuthRequestParams
 
 export type AuthRequestParams = { user: { userId: string } }

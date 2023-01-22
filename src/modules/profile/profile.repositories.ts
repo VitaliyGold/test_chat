@@ -1,6 +1,6 @@
 import prisma from '../../utils/prisma';
 
-export function getProfile(userId) {
+export function getProfile(userId: string) {
 	return prisma.profileData.findUnique({
 		where: {
 			userId
