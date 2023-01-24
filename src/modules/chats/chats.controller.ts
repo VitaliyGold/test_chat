@@ -1,21 +1,30 @@
 import ChatsService from './chats.service';
 import { FastifyReply } from 'fastify';
-import { CreateChatRequest, GetChatsRequest, GetChatForIdRequest } from './chats.types';
+import { 
+	CreateChatRequest, GetChatsRequest, GetChatForIdRequest, 
+	GetChatMembersRequest } 
+	from './chats.types';
 
 class ChatsController {
-	async CreateChatHandler(request: CreateChatRequest, reply: FastifyReply) {
+	CreateChatHandler(request: CreateChatRequest, reply: FastifyReply) {
 		const { userId } = request.user;
 		const chatInfo = request.body;
 		return ChatsService.createChat(userId, chatInfo, reply);
 	}
 
-	async GetChatsHandler(request: GetChatsRequest, reply: FastifyReply) {
+	GetChatsHandler(request: GetChatsRequest, reply: FastifyReply) {
 		const { userId } = request.user;
 
 		return ChatsService.getChatListForUserId(userId, reply);
 	}
 
-	async GetChatForIdHandler(request: GetChatForIdRequest, reply: FastifyReply) {
+	GetChatMembers(request: GetChatMembersRequest, reply: FastifyReply) {
+		const { chatId } = request.query;
+
+		return ChatsService.getChatMembers(chatId, reply);
+	}
+
+	GetChatForIdHandler(request: GetChatForIdRequest, reply: FastifyReply) {
 		const { userId } = request.user;
 
 		const { chatId } = request.query;

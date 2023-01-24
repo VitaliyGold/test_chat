@@ -1,28 +1,29 @@
-import { SendMessageDto, MessageDto } from './messages.types';
+import { SendMessage } from './messages.types';
 import { FastifyReply } from 'fastify';
 import { sendMessage, getMessageList } from './messages.repositories';
 import { randomUUID } from 'crypto';
+import { getMessageToFront } from './messages.mapper';
 
 class MessagesService {
-	async sendMessage(userId, messageInfo, reply: FastifyReply) {
+	async sendMessage(userId: string, messageInfo: SendMessage, reply: FastifyReply) {
 
-		const message = {
+		const messageDto = {
 			...messageInfo,
 			ownerId: userId,
 			messageId: randomUUID()
 		};
-
-		const chatsList = await sendMessage(message);
-		reply.send(chatsList);
+		// посмотреть какую-нибудь либу с pipe или подумать над своей реализацией
+		const message = await sendMessage(messageDto);
+		reply.send(getMessageToFront(message));
 	}
 
-	async getList(userId, chatId, page: number, reply: FastifyReply) {
+	async getList(userId: string, chatId: string, page: number, reply: FastifyReply) {
 
 		// вот тут должна быть проверка, может ли пользователь получить этот чат
  
-		const messageList = await getMessageList(chatId, page);
+		const messageList = await getMessageList(chatId, Number(page));
 
-		reply.send(messageList);
+		reply.send(messageList.map(message => getMessageToFront(message)));
 	}
 }
 

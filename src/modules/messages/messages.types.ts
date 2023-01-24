@@ -1,17 +1,34 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { AuthRequestParams } from '../auth/types';
 
-export interface SendMessageDto {
+// приходит с фронта
+export interface SendMessage {
     messageType: 1 | 2 | 3,
     messageText: string,
     chatId: string,
 }
 
-export interface MessageDto extends SendMessageDto{
+// внутренняя модель
+export interface MessageDto {
+    messageText: string,
+    chatId: string,
     ownerId: string,
-    messageId: string
+    messageId: string,
 }
 
-export type SendMessageRequest = FastifyRequest<{ Body: SendMessageDto }> & { user: { userId: string } }
+// с призмы
+export interface MessageDtoFromBd extends MessageDto {
+    owner: {
+        name: string
+    }
+}
+
+// на фронт
+export interface MessageDtoToFront extends MessageDto{
+    name: string,
+    status: 'delivered' | 'read'
+}
+
+export type SendMessageRequest = FastifyRequest<{ Body: SendMessage }> & { user: { userId: string } }
 
 export type GetMessageListRequest = FastifyRequest<{ Querystring: { chatId: string, page: number } }> & { user: { userId: string } }

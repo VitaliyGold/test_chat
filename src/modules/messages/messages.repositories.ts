@@ -8,8 +8,21 @@ export async function sendMessage(message: MessageDto) {
 		data: {
 			chatId: message.chatId,
 			ownerId: message.ownerId,
-			messageText: message.messageText
+			messageText: message.messageText,
+		},
+		select: {
+			chatId: true,
+			ownerId: true,
+			messageText: true,
+			messageId: true,
+			createdAt: true,
+			owner: {
+				select: {
+					name: true
+				}
+			}
 		}
+
 	});
 }
 
@@ -20,6 +33,18 @@ export async function getMessageList(chatId: string, skipNumber: number) {
 		return prisma.messagesData.findMany({
 			where: {
 				chatId: chatId
+			},
+			select: {
+				ownerId: true,
+				createdAt: true,
+				messageId: true,
+				messageText: true,
+				chatId: true,
+				owner: {
+					select: {
+						name: true
+					}
+				}
 			},
 			take: 50,
 			skip: skipNumber,

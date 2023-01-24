@@ -1,8 +1,11 @@
 import { FastifyReply } from 'fastify';
 import { CreateChatInfoDto, CreateChatDto } from './chats.types';
-import { createNewChat, getChatListForUserId, getChatForMemberIds, getChatForId } from './chats.repositories';
+import { 
+	createNewChat, getChatListForUserId, getChatForMemberIds, 
+	getChatForId, getChatMembers 
+} from './chats.repositories';
 import { randomUUID } from 'crypto';
-import { getNewChatFrontDto } from './chats.adapters';
+import { getNewChatFrontDto, getChatMembersToFront } from './chats.mappers';
 class ChatsService {
 	async getChatListForUserId(userId, reply: FastifyReply) {
 		const chatsList = await getChatListForUserId(userId);
@@ -10,7 +13,7 @@ class ChatsService {
 		reply.send(chatsList);
 	}
 
-	async createChat(userId, chatInfo, reply: FastifyReply) {
+	async createChat(userId: string, chatInfo: CreateChatInfoDto, reply: FastifyReply) {
 		// пока работаем только с первым типом - личными сообщениями
 		// проверить есть ли уже чат данного типа с пользователем
 		// если уже есть - вернуть ошибку и id чата
@@ -42,6 +45,12 @@ class ChatsService {
 		const newChatDto = getNewChatFrontDto(newChat);
 
 		reply.send(newChatDto);
+	}
+
+	async getChatMembers(chatId: string, reply: FastifyReply) {
+		const chatMembers = await getChatMembers(chatId);
+
+		reply.send(getChatMembersToFront(chatMembers))
 	}
 
 	async getChatForId(userId: string, chatId: string, reply: FastifyReply) {

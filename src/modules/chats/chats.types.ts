@@ -27,6 +27,13 @@ interface CreateChatMessage {
     }
 }
 
+interface ChatMemberUserInfo {
+    avatarLink: string,
+    name: string
+}
+
+
+// типы приходящие при запросе призмы
 interface ChatMemberDtoDb {
     userId: string,
     user: {
@@ -42,6 +49,14 @@ export interface CreatedChatDtoDb {
     messages: CreateChatMessage[]
 }
 
+export interface ChatMembersDtoDb {
+    chatId: string,
+    userId: string,
+    user: ChatMemberUserInfo
+}
+
+
+// типы которые нужно пробросить на фронт
 interface ChatMemberDtoFront {
     name: string,
     userId: string
@@ -55,16 +70,26 @@ export interface CreatedChatDtoToFront {
     firstMessage: {
         messageId: string,
         ownerId: string,
-        ownerName: string,
+        name: string,
         messageText: string,
         createdAt: string
     }
 }
 
+export interface ChatMemberDtoToFront extends ChatMemberUserInfo {
+    chatId: string,
+    userId: string,
+}
+
+// типы запросов
 
 
 export type CreateChatRequest = FastifyRequest<{ Body: CreateChatInfoDto }> & AuthRequestParams;
 
 export type GetChatsRequest = FastifyRequest & AuthRequestParams; 
 
+export type GetChatMembersRequest = FastifyRequest<{ Querystring: { chatId: string } }> & AuthRequestParams; 
+
 export type GetChatForIdRequest = FastifyRequest<{ Querystring: { chatId: string } }> & AuthRequestParams;
+
+// потом сюда же добавить типизацию ответов
