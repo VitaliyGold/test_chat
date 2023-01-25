@@ -18,6 +18,7 @@ export interface MessageDto {
 
 // с призмы
 export interface MessageDtoFromBd extends MessageDto {
+    createdAt: Date,
     owner: {
         name: string
     }
@@ -26,7 +27,8 @@ export interface MessageDtoFromBd extends MessageDto {
 // на фронт
 export interface MessageDtoToFront extends MessageDto{
     name: string,
-    status: 'delivered' | 'read'
+    status: 'delivered' | 'read',
+    createdAt: Date,
 }
 
 export type SendMessageRequest = FastifyRequest<{ Body: SendMessage }> & { user: { userId: string } }

@@ -7,6 +7,7 @@ export function getMessageToFront(message: MessageDtoFromBd): MessageDtoToFront 
         ownerId: message.ownerId,
         name: message.owner.name,
         messageId: message.messageId,
-        status: 'delivered'
+        status: 'delivered',
+        createdAt: message.createdAt
     }
 }

@@ -6,8 +6,8 @@ import { SendMessageRequest, GetMessageListRequest } from './messages.types';
 class MessagesController {
 	async SendMessagesHandler(request: SendMessageRequest, reply: FastifyReply) {
 		const { userId } = request.user;
-		const chatInfo = request.body;
-		return MessagesService.sendMessage(userId, chatInfo, reply);
+		const message = request.body;
+		return MessagesService.sendMessage(userId, message, reply);
 	}
 
 	async GetMessagesList(request: GetMessageListRequest, reply: FastifyReply) {
