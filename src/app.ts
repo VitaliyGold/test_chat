@@ -17,18 +17,34 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
 		options: opts,
 	});
 
-	fastify.addHook('onRequest', async (req, reply) => {
+	fastify.addHook('preValidation', async (req, reply) => {
 		try {
 			const url = req.url.split('/');
-			if (url[1] !== 'auth') {
+			
+			if (url[1].includes('ws')) {
+
+				const token = url[1].split('Bearer%20')[1];
 				// @ts-ignore
-				const { name } = await req.jwtVerify();
+				const { name, userId } = await fastify.jwt.verify(token);
 				if (name !== 'authToken') {
 					return reply.status(401).send({
 						message: 'Invalid token',
 						status: 401
 					});
 				}
+				req.user = { userId }
+
+			} else if (url[1] !== 'auth') {
+				const token = req.headers.authorization.split(' ')[1];
+				// @ts-ignore
+				const { name, userId } = await fastify.jwt.verify(token);
+				if (name !== 'authToken') {
+					return reply.status(401).send({
+						message: 'Invalid token',
+						status: 401
+					});
+				}
+				req.user = { userId }
 			}
 		} catch(e) {
 			reply.code(401).send(e);

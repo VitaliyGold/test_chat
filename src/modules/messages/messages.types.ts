@@ -1,4 +1,4 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyRequest } from 'fastify';
 import { AuthRequestParams } from '../auth/types';
 
 // приходит с фронта
@@ -33,4 +33,4 @@ export interface MessageDtoToFront extends MessageDto{
 
 export type SendMessageRequest = FastifyRequest<{ Body: SendMessage }> & { user: { userId: string } }
 
-export type GetMessageListRequest = FastifyRequest<{ Querystring: { chatId: string, page: number } }> & { user: { userId: string } }
+export type GetMessageListRequest = FastifyRequest<{ Querystring: { chatId: string, page: number } }> & AuthRequestParams

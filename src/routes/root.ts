@@ -1,11 +1,8 @@
 import { FastifyPluginAsync } from 'fastify';
+import SocketController from '../modules/sockets/sockets.controller';
 
 const root: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
-	fastify.post('/',  {
-        
-	}, function(req, reply) {
-		return reply.send('Все ок');
-	});
+	fastify.get('/ws',  { websocket: true }, SocketController.socketRouteHandler);
 };
 
 export default root;
