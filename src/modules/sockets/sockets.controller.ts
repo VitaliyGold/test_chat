@@ -1,10 +1,10 @@
 import { SocketStream } from '@fastify/websocket';
-import { AuthRequestParams } from '../auth/types';
+import { SocketConnectRequest } from './sockets.types';
 import SocketService from './sockets.service';
 
 class SocketController {
 
-    socketRouteHandler(connection: SocketStream, request: AuthRequestParams): void {
+    socketRouteHandler(connection: SocketStream, request: SocketConnectRequest): void {
         
         const { userId } = request.user;
         console.log('пользователь подключился')
