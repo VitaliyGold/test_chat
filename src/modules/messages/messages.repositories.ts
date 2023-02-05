@@ -47,7 +47,7 @@ export async function getMessageList(chatId: string, skipNumber: number) {
 				}
 			},
 			orderBy: {
-				createdAt: 'asc'
+				createdAt: 'desc'
 			},
 			take: 50,
 			skip: skipNumber,

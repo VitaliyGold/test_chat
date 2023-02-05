@@ -9,6 +9,7 @@ datasource db {
 }
 
 
+
 model AuthData {
   id Int @id @default(autoincrement())
   login String @unique
@@ -33,7 +34,7 @@ model ProfileData {
 
 model ChatsData {
   id Int @id @default(autoincrement())
-  chatType Int
+  chatType Int @default(1) @db.SmallInt
   chatId String @unique
   owner ProfileData @relation(fields: [ownerId], references: [userId])
   ownerId String @db.Uuid

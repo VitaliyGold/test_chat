@@ -1,9 +1,17 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
+import { FastifyRequest } from 'fastify';
 import { AuthRequestParams } from '../auth/types';
+
+
+export enum ChatTypes {
+    SINGLE = 0,
+    DIALOG = 1,
+    MONOLOG = 2,
+    DISCURS = 3
+}
 
 export interface CreateChatInfoDto {
     members: Array<string>,
-    chatType: 1 | 2 | 3,
+    chatType: ChatTypes,
     startMessage: string
 }
 
@@ -41,11 +49,14 @@ interface ChatMemberDtoDb {
     }
 }
 
-export interface CreatedChatDtoDb {
+export interface ChatDtoFromBd {
     chatId: string,
     ownerId: string,
-    createdAt: string,
+    chatType: Number,
     member: ChatMemberDtoDb[]
+}
+
+export interface CreatedNewChatDtoFromBd extends ChatDtoFromBd{
     messages: CreateChatMessage[]
 }
 
@@ -62,11 +73,14 @@ interface ChatMemberDtoFront {
     userId: string
 }
 
-export interface CreatedChatDtoToFront {
+export interface ChatDtoToFront {
     chatId: string,
     ownerId: string,
-    createdAt: string,
+    chatType: ChatTypes,
     members: ChatMemberDtoFront[]
+}
+
+export interface CreatedChatDtoToFront extends ChatDtoToFront {
     firstMessage: {
         messageId: string,
         ownerId: string,
@@ -80,6 +94,8 @@ export interface ChatMemberDtoToFront extends ChatMemberUserInfo {
     chatId: string,
     userId: string,
 }
+
+
 
 // типы запросов
 

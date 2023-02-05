@@ -6,7 +6,12 @@ export async function getChatForId(chatId: string) {
 		where: {
 			chatId: chatId
 		},
-		include: {
+		select: {
+			id: false,
+			createdAt: false,
+			chatId: true,
+			chatType: true,
+			ownerId: true,
 			member: {
 				select: {
 					userId: true,
@@ -16,8 +21,8 @@ export async function getChatForId(chatId: string) {
 						}
 					}
 				}
-			}
-		}
+			},
+		},
 	});
 }
 

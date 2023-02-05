@@ -1,9 +1,9 @@
 import { 
-	CreatedChatDtoDb, CreatedChatDtoToFront, ChatMembersDtoDb,
-	ChatMemberDtoToFront 
+	CreatedNewChatDtoFromBd, CreatedChatDtoToFront, ChatMembersDtoDb,
+	ChatMemberDtoToFront, ChatDtoFromBd, ChatDtoToFront, ChatTypes
 } from './chats.types';
 
-export function getNewChatFrontDto(chatData: CreatedChatDtoDb): CreatedChatDtoToFront {
+export function getNewChatFrontDto(chatData: CreatedNewChatDtoFromBd): CreatedChatDtoToFront {
 
 	const members = chatData.member.map((member) => {
 		return {
@@ -15,7 +15,7 @@ export function getNewChatFrontDto(chatData: CreatedChatDtoDb): CreatedChatDtoTo
 	return {
 		chatId: chatData.chatId,
 		ownerId: chatData.ownerId,
-		createdAt: chatData.createdAt,
+		chatType: chatData.chatType as ChatTypes,
 		members,
 		firstMessage: {
 			messageText: chatData.messages[0].messageText,
@@ -37,4 +37,21 @@ export function getChatMembersToFront(membersData: ChatMembersDtoDb[]): ChatMemb
 			avatarLink: member.user.avatarLink
 		}
 	})
+}
+
+export function getChatToFront(chatData: ChatDtoFromBd, userId: string): ChatDtoToFront {
+	return {
+		chatId: chatData.chatId,
+		chatType: chatData.chatType as ChatTypes,
+		ownerId: chatData.ownerId,
+		members: chatData.member.reduce((acc, cur) => {
+			if (cur.userId === userId) {
+				return acc;
+			} else {
+				acc.push({ userId: cur.userId, name: cur.user.name })
+			}
+			return acc;
+		}, [])
+
+	}
 }

@@ -1,11 +1,11 @@
 import { FastifyReply } from 'fastify';
-import { CreateChatInfoDto, CreateChatDto } from './chats.types';
+import { CreateChatInfoDto, CreateChatDto, ChatTypes } from './chats.types';
 import { 
 	createNewChat, getChatListForUserId, getChatForMemberIds, 
-	getChatForId, getChatMembers 
+	getChatForId, getChatMembers
 } from './chats.repositories';
 import { randomUUID } from 'crypto';
-import { getNewChatFrontDto, getChatMembersToFront } from './chats.mappers';
+import { getNewChatFrontDto, getChatMembersToFront, getChatToFront } from './chats.mappers';
 class ChatsService {
 	async getChatListForUserId(userId, reply: FastifyReply) {
 		const chatsList = await getChatListForUserId(userId);
@@ -19,6 +19,15 @@ class ChatsService {
 		// если уже есть - вернуть ошибку и id чата
 		// если нет - создать новый чат, записать в таблицу chats_members_data пользователей
 		// создать первое сообщение в чате
+
+		if (!ChatTypes[chatInfo.chatType]) {
+			reply.status(403).send({
+				error: 'incorrect_chat_type',
+				statusCode: 403,
+				message: 'Некорректный тип чата',
+			});
+			return;
+		}
 
 		const memberIds = chatInfo.members;
 
@@ -39,12 +48,9 @@ class ChatsService {
 			chatId: randomUUID(),
 			firstMessageId: randomUUID()
 		};
-		// это говнище нужно нормально типизировать, иначе выходит пиздец
 		const newChat = await createNewChat(createChatInfo);
 
-		const newChatDto = getNewChatFrontDto(newChat);
-
-		reply.send(newChatDto);
+		reply.send(getNewChatFrontDto(newChat));
 	}
 
 	async getChatMembers(chatId: string, reply: FastifyReply) {
@@ -57,7 +63,7 @@ class ChatsService {
 
 		const chat = await getChatForId(chatId);
 
-		reply.send(chat);
+		reply.send(getChatToFront(chat, userId));
 
 	}
 

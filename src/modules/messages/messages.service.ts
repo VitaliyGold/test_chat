@@ -38,10 +38,15 @@ class MessagesService {
 	async getList(userId: string, chatId: string, page: number, reply: FastifyReply) {
 
 		// вот тут должна быть проверка, может ли пользователь получить этот чат
- 
-		const messageList = await getMessageList(chatId, Number(page));
+		const messageList = await getMessageList(chatId, Number(page) * 50);
 
-		reply.send(messageList.map(message => getMessageToFront(message)));
+		let mappedMessageList = messageList.map(message => getMessageToFront(message));
+
+		if (page !== 0) {
+			mappedMessageList = mappedMessageList.reverse();
+		}
+
+		reply.send(mappedMessageList);
 	}
 }
 
