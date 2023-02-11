@@ -1,6 +1,6 @@
 import { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import AuthController from '../../modules/auth/auth.controller';
-import { LoginRequest, RegistrationRequest, RefreshRequest } from '../../modules/auth/types';
+import { LoginRequest, RegistrationRequest, RequestWithAuth } from '../../modules/auth/types';
 
 
 const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
@@ -12,10 +12,12 @@ const authRoute: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 	fastify.post('/login', function(req: LoginRequest, reply) {
 		return AuthController.LoginHandler(fastify, req, reply);
 	});
-	fastify.post('/refresh', async function(request: RefreshRequest, reply) {
+	fastify.post('/refresh', function(request: RequestWithAuth, reply) {
 		return AuthController.RefreshTokenHandler(fastify, request, reply);
-	}
-	);
+	});
+	fastify.post('/logout', function(request: RequestWithAuth, reply) {
+		return AuthController.LogoutHandler(fastify, request, reply);
+	});
 };
 
 export default authRoute;

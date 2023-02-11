@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { FastifyReply, FastifyInstance } from 'fastify';
-import { RegistrationRequest, CheckLoginRequest, LoginRequest, RefreshRequest } from './types';
-import { getUserByLogin, createNewUser } from './auth.repositories';
+import { RegistrationRequest, CheckLoginRequest, LoginRequest, RequestWithAuth } from './types';
+import { getUserByLogin, createNewUser, setTokenToBlackList } from './auth.repositories';
 import { AuthErrors } from './auth.errors';
+import { TokenBlackList } from '@prisma/client';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const bcrypt = require('bcrypt');
@@ -33,7 +34,7 @@ class AuthService {
 		const token = fastify.jwt.sign({
 			name: 'authToken',
 			userId
-		}, {expiresIn: '1d'});
+		}, {expiresIn: '2m'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
@@ -80,7 +81,7 @@ class AuthService {
 		const token = fastify.jwt.sign({
 			name: 'authToken',
 			userId: user.userId
-		}, {expiresIn: '1d'});
+		}, {expiresIn: '2m'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
@@ -98,36 +99,46 @@ class AuthService {
 		});
 
 	}
-	async refresh(fastify: FastifyInstance, req: RefreshRequest, reply: FastifyReply) {
-		// @ts-ignore
-		const { userId } = await req.jwtVerify({ onlyCookie: true });
+	async refresh(fastify: FastifyInstance, req: RequestWithAuth, reply: FastifyReply) {
 
-		if (!userId) {
-			return reply.status(401).send('Внутри нет токена пользователя');
-		}
+		const refreshToken = req.cookies.refreshToken;
+		try {
+			if (!refreshToken || fastify.tokensBlackList.has(refreshToken)) {
+				throw new Error();
+			}
 
-		const token = fastify.jwt.sign({
-			name: 'authToken',
-			userId: userId
-		}, {expiresIn: '1d'});
-
-		const refreshToken = fastify.jwt.sign({
-			name: 'refreshToken',
-			userId
-		}, {expiresIn: '2d'});
-
-		return reply.status(200)
-			.setCookie('refreshToken', refreshToken, {
-				path: '/',
-				secure: false,
-				httpOnly: true,
-				sameSite: false
-			})
-			.send({
-				token
+			const decoded = fastify.jwt.verify(refreshToken)
+			
+			const newAccessToken = fastify.jwt.sign(
+				// @ts-ignore
+				{ userId: decoded.userId },
+				{ expiresIn: '2m' }
+				);
+			reply.send({
+				token: newAccessToken
 			});
+
+		} catch(e) {
+			reply.status(401).send({ message: 'Invalid Auth' });
+		}
 	}
     
+	async logout(fastify: FastifyInstance, req: RequestWithAuth, reply: FastifyReply) {
+
+		const refreshToken = req.cookies.refreshToken;
+		const accessToken = req.headers.authorization.split(' ')[1];
+
+		try {
+			const tokensList = [ { token: refreshToken }, { token: accessToken } ];
+			await setTokenToBlackList(tokensList);
+			fastify.tokensBlackList.add(refreshToken);
+			fastify.tokensBlackList.add(accessToken);
+			reply.clearCookie('refreshToken').status(200).send(true);
+		} catch(e) {
+			console.log(e);
+			reply.status(500).send({ message: 'Ошибка авторизации' });
+		}
+	}
 }
 
 export default new AuthService();

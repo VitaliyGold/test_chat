@@ -1,6 +1,7 @@
 import fp from 'fastify-plugin';
 import jwt from '@fastify/jwt';
 import fastifyCookie  from '@fastify/cookie';
+import TokensBlackListPlugin from '../customPlugins/tokensBlackListPlugin';
 import { loadEnv } from '../helpers/helpers';
 
 export default fp(async (fastify) => {
@@ -24,5 +25,6 @@ export default fp(async (fastify) => {
 				sameSite: true
 			}
             
-		});
+		})
+		.register(TokensBlackListPlugin)
 });

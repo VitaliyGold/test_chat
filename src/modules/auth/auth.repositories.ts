@@ -1,5 +1,5 @@
 import prisma from '../../utils/prisma';
-import { CreateUserDto, LoginDto } from './types';
+import { CreateUserDto, TokensList } from './types';
 
 export async function getUserByLogin(login: string) {
 	return await prisma.authData.findUnique({
@@ -7,6 +7,16 @@ export async function getUserByLogin(login: string) {
 			login: login
 		}
 	});
+}
+
+export async function getTokensFromBlackList() {
+	return await prisma.tokenBlackList.findMany();
+}
+
+export async function setTokenToBlackList(tokens: TokensList) {
+	return await prisma.tokenBlackList.createMany({
+		data: tokens
+	})
 }
 
 export async function createNewUser(authData: CreateUserDto) {

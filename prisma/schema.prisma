@@ -18,6 +18,11 @@ model AuthData {
   userId String @unique @db.Uuid
 }
 
+model TokenBlackList {
+  token String
+  @@id([token])
+}
+
 model ProfileData {
   name String
   authData AuthData @relation(fields: userId, references: userId)

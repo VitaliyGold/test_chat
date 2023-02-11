@@ -25,6 +25,8 @@ export interface UserLoginRequest {
     password: string
 }
 
+export type TokensList = Array<{ token: string }>;
+
 
 export type CheckLoginRequest = FastifyRequest<{Body: { login: string }}>
 
@@ -33,6 +35,6 @@ export type RegistrationRequest = FastifyRequest<{Body: UserRegistrationRequest}
 export type LoginRequest = FastifyRequest<{Body: UserLoginRequest}>
 
 
-export type RefreshRequest = FastifyRequest & AuthRequestParams
+export type RequestWithAuth = FastifyRequest & AuthRequestParams
 
 export type AuthRequestParams = { user: { userId: string } }

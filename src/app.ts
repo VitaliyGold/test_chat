@@ -2,6 +2,8 @@ import { join } from 'path';
 import fastifyAutoload from '@fastify/autoload';
 import { FastifyPluginAsync } from 'fastify';
 import { JWT } from '@fastify/jwt';
+import AutorizationHook from './utils/authHook';
+import TokenBlackListHook from './utils/tokenBlackListHook';
 
 
 const app: FastifyPluginAsync<FastifyPluginAsync> = async (
@@ -14,47 +16,20 @@ const app: FastifyPluginAsync<FastifyPluginAsync> = async (
 	});
 	void fastify.register(fastifyAutoload, {
 		dir: join(__dirname, 'routes'),
-		options: opts,
+		options: {
+			prefix: '/api'
+		},
 	});
 
-	fastify.addHook('preValidation', async (req, reply) => {
-		try {
-			const url = req.url.split('/');
-			
-			if (url[1].includes('ws')) {
+	fastify.addHook('onReady', (done) => TokenBlackListHook(fastify, done))
 
-				const token = url[1].split('Bearer%20')[1];
-				// @ts-ignore
-				const { name, userId } = await fastify.jwt.verify(token);
-				if (name !== 'authToken') {
-					return reply.status(401).send({
-						message: 'Invalid token',
-						status: 401
-					});
-				}
-				req.user = { userId }
-
-			} else if (url[1] !== 'auth') {
-				const token = req.headers.authorization.split(' ')[1];
-				// @ts-ignore
-				const { name, userId } = await fastify.jwt.verify(token);
-				if (name !== 'authToken') {
-					return reply.status(401).send({
-						message: 'Invalid token',
-						status: 401
-					});
-				}
-				req.user = { userId }
-			}
-		} catch(e) {
-			reply.code(401).send(e);
-		}
-	});
+	fastify.addHook('preValidation', (req, reply, done) => AutorizationHook(fastify, req, reply, done));
 };
 
 declare module 'fastify' {
     export interface FastifyInstance {
         authenticate: never,
+		tokensBlackList: Set<string>,
 		jwt: JWT
     }
 }
