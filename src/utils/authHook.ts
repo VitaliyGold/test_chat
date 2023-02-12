@@ -1,12 +1,12 @@
 import { FastifyReply, FastifyRequest, FastifyInstance } from "fastify";
 
 const AutorizationHook = (fastify: FastifyInstance, req: FastifyRequest, reply: FastifyReply, done: (err?: Error) => void) => {
-
+    
     try {
         const url = req.url.split('/');
         if (url[2].includes('ws')) {
 
-            const token = url[1].split('Bearer%20')[1];
+            const token = url[2].split('Bearer%20')[1];
             // @ts-ignore
             const { userId } = fastify.jwt.verify(token);
             req.user = { userId };
