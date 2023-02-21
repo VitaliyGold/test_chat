@@ -6,7 +6,8 @@ export interface CreateUserDto {
     password: string,
     name: string,
     userLink: string,
-    avatarLink: string
+    avatarLink: string,
+    userDescriptions: string
 }
 
 export interface LoginDto {

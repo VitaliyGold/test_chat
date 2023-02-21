@@ -26,7 +26,8 @@ class AuthService {
 			userId,
 			name,
 			userLink: '',
-			avatarLink: ''
+			avatarLink: '',
+			userDescriptions: ''
 		};
 
 		await createNewUser(newUser);
@@ -34,7 +35,7 @@ class AuthService {
 		const token = fastify.jwt.sign({
 			name: 'authToken',
 			userId
-		}, {expiresIn: '2m'});
+		}, {expiresIn: '20m'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
@@ -57,7 +58,9 @@ class AuthService {
 
 		const user = await getUserByLogin(login);
 		if (user) {
-			return reply.code(400).send(AuthErrors.busyLogin);
+			return reply.code(200).send({
+				result: false
+			});
 		}
 		return reply.code(200).send({
 			result: true
@@ -81,7 +84,7 @@ class AuthService {
 		const token = fastify.jwt.sign({
 			name: 'authToken',
 			userId: user.userId
-		}, {expiresIn: '2m'});
+		}, {expiresIn: '20m'});
 
 		const refreshToken = fastify.jwt.sign({
 			name: 'refreshToken',
@@ -112,7 +115,7 @@ class AuthService {
 			const newAccessToken = fastify.jwt.sign(
 				// @ts-ignore
 				{ userId: decoded.userId },
-				{ expiresIn: '2m' }
+				{ expiresIn: '20m' }
 				);
 			reply.send({
 				token: newAccessToken

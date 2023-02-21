@@ -8,7 +8,9 @@ class ProfileController {
 
 		const { userId } = request.user;
 
-		return ProfileService.getProfile(userId, reply);
+		const { profileId } = request.query;
+
+		return ProfileService.getProfile(userId, profileId, reply);
 
 	}
 

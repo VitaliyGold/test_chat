@@ -28,6 +28,7 @@ model ProfileData {
   authData AuthData @relation(fields: userId, references: userId)
   userId String @unique @db.Uuid
   avatarLink String @default("")
+  userDescription String @default("")
   userLink String @default("")
   chatsMembersList ChatsMembersData[]
   chatsData ChatsData[]

@@ -17,3 +17,13 @@ export function validateLength( validateData: lengthValidateArg[] ):boolean {
 	}
 	return true;
 }
+
+
+// вот эту хуйню заменить после нормальной схемой и валидацией на уровне запроса
+export function checkUUID(value: string) {
+	if (value && typeof value === 'string') {
+		console.log(121)
+		return /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i.test(value);
+	}
+	return false;
+}

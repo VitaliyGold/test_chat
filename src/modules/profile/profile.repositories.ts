@@ -9,7 +9,25 @@ export function getProfile(userId: string) {
 			name: true,
 			userId: true,
 			userLink: true,
-			avatarLink: true
+			avatarLink: true,
+			userDescription: true,
+			chatsMembersList: {
+				where: {
+					chat: {
+						member: {
+							some: {
+								userId,
+							},
+						}
+					}
+				},
+				select: {
+					id: false,
+					chatId: true,
+					userId: true
+				}
+                
+			},
 		}
 	});
 }

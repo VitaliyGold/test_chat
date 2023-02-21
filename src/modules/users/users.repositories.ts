@@ -1,43 +1,54 @@
 import prisma from '../../utils/prisma';
 
-export async function getUserProfileById(id: string) {
+export async function getUserProfileById(userId: string) {
+	console.log(userId)
 	return prisma.profileData.findUnique({
 		where: {
-			userId: id
+			userId
 		},
 		select: {
 			name: true,
 			userId: true,
+			userDescription: true,
 			chatsData: {
 				select: {
-					chatId: true
+					chatId: true,
 				}
 			}
 		}
 	});
-}
+};
 
 
-export async function getUsersList(name: string, from = 0, count = 50, userId) {
+export async function getUsersList(name: string, from = 0, count = 50, userId: string) {
 	return prisma.profileData.findMany({
 		where: {
 			name: {
 				contains: name,
 				mode: 'insensitive'
 			},
+			NOT: {
+				userId
+			}
 		},
 		select: {
 			name: true,
 			userId: true,
+			userDescription: true,
 			chatsMembersList: {
 				where: {
 					chat: {
 						member: {
 							some: {
-								userId
-							}
+								userId,
+							},
 						}
 					}
+				},
+				select: {
+					id: false,
+					chatId: true,
+					userId: true
 				}
                 
 			},

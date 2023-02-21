@@ -1,31 +1,16 @@
 import { FastifyReply } from 'fastify';
 import { getUserProfileById, getUsersList } from './users.repositories';
-import { UsersList } from './users.types';
+import { mapUsersList } from './users.mapper';
 
 class UsersService {
-	async getUserById(id: string, reply: FastifyReply) {
-		const user = await getUserProfileById(id);
+	// вообще не нужный запрос, после выпилить, будет заменен на profile
+	async getUserById(userId: string, reply: FastifyReply) {
+		const user = await getUserProfileById(userId);
 		reply.send(user);
 	}
-	async getUsers(name = '', page = 0, userId, reply: FastifyReply) {
+	async getUsers(name = '', page = 0, userId: string, reply: FastifyReply) {
 		const usersList = await getUsersList(name.toLowerCase(), Number(page), 50, userId);
-		const usersWithChats = [];
-		// помечаем есть ли у текущего пользователя чат с данным пользователем
-		for (const user of usersList) {
-
-			if (user.userId === userId) {
-				continue;
-			}
-
-			const chatId = user.chatsMembersList.length ? user.chatsMembersList[0].chatId : null;
-
-			usersWithChats.push({
-				userId: user.userId,
-				name: user.name,
-				haveChat: !!user.chatsMembersList.length,
-				chatId 
-			});
-		}
+		const usersWithChats = mapUsersList(userId, usersList);
 
 		reply.send(usersWithChats);
 	}

@@ -13,7 +13,7 @@ class UserController {
 	}
 	getUserByIdHandler(request: GetUserByIdRequest, reply: FastifyReply) {
 
-		const { userId } = request.params;
+		const { userId } = request.query;
 
 		return UsersService.getUserById(userId, reply);
 	}
